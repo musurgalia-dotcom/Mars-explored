@@ -2,6 +2,11 @@
 // Coordinates use East Longitude (0..360°E) around Arcadia Planitia (172°E..192°E)
 // and Planetocentric Latitude (37.5°N..48.5°N).
 // Mean Mars Radius R = 3,389.5 km (NASA Mars Fact Sheet [26]).
+import {
+  getGlobalMolaElevationMeters,
+  getGlobalMolaSlopeDegrees,
+  runGlobalMarsAStar
+} from './marsGlobalTerrain';
 
 export const MARS_MEAN_RADIUS_KM = 3389.5;
 
@@ -489,7 +494,22 @@ export const PROPOSED_HABITAT = {
     'Conceptual mid-latitude surface base sited on gently sloping lowland plains between mapped CTX corridors, within reach of potential SWIM/SHARAD ice zones while clear of major boulder fields.'
 };
 
+export interface RouteAnalysisDetails {
+  factorsConsidered: string[];
+  slopeSummary: string;
+  avgSlopeDeg: number;
+  maxSlopeDeg: number;
+  roughnessAndCoverageNote: string;
+  adjustmentReasons: string[];
+  incompleteDataWarning: string | null;
+  terrainDifficultyFactor: number;
+  detourKm: number;
+  detourPercent: number;
+}
+
 export interface RouteResult {
+  routeAvailable: boolean;
+  blockedReason: string | null;
   waypoints: [number, number][];
   segments: [number, number][][];
   straightLineKm: number;
@@ -503,12 +523,119 @@ export interface RouteResult {
   minElevationM: number | null;
   elevationGainM: number | null;
   hazardsNearRoute: string[];
-  routeMode: 'arcadia_terrain' | 'global_approximate';
+  avoidedHazards: string[];
+  routeMode: 'arcadia_terrain' | 'global_terrain';
   isApproximate: boolean;
+  analysis: RouteAnalysisDetails;
 }
 
-// Compute either Arcadia terrain-aware A* route (inside study corridor)
-// or global Martian planetary route anywhere on the loaded 2D map.
+export interface ScientificDataSourceEntry {
+  name: string;
+  missionOrOrg: string;
+  category: 'Direct scientific observation' | 'Data-derived terrain calculation' | 'Route-planning simulation';
+  provides: string;
+  resolutionCoverage: string;
+  url: string;
+}
+
+export const ROUTE_SCIENTIFIC_SOURCES: ScientificDataSourceEntry[] = [
+  {
+    name: 'MGS MOLA (Mars Orbiter Laser Altimeter)',
+    missionOrOrg: 'NASA Mars Global Surveyor / GSFC',
+    category: 'Direct scientific observation',
+    provides: 'Global planetary elevation heights relative to the Martian areoid datum and regional basin/volcano relief.',
+    resolutionCoverage: 'Global ~463 m/px reference mosaic (2° planetary routing grid + Arcadia regional model)',
+    url: 'https://science.nasa.gov/photojournal/mars-topography/'
+  },
+  {
+    name: 'MRO HiRISE (High Resolution Imaging Science Experiment)',
+    missionOrOrg: 'NASA Mars Reconnaissance Orbiter / JPL / Univ. of Arizona',
+    category: 'Direct scientific observation',
+    provides: 'Targeted meter-scale boulder fields, fresh impact crater walls, and exposed ice scarps.',
+    resolutionCoverage: '~0.28–0.30 m/px (targeted strips only — incomplete global coverage)',
+    url: 'https://science.nasa.gov/mission/mars-reconnaissance-orbiter/science-instruments/'
+  },
+  {
+    name: 'MRO CTX (Context Camera)',
+    missionOrOrg: 'NASA Mars Reconnaissance Orbiter / JPL / MSSS',
+    category: 'Direct scientific observation',
+    provides: 'Regional context imagery for crater rims, scalloped thermokarst depressions, and plains corridors.',
+    resolutionCoverage: '~6 m/px (mapped Arcadia corridor strips)',
+    url: 'https://science.nasa.gov/mission/mars-reconnaissance-orbiter/science-instruments/'
+  },
+  {
+    name: 'NASA Mars Trek Viking MDIM 2.1 & USGS Geologic Map (SIM 3292)',
+    missionOrOrg: 'NASA JPL / U.S. Geological Survey',
+    category: 'Direct scientific observation',
+    provides: 'Planetary surface imagery and mapped tectonic canyon, volcanic scarp, and geological unit boundaries.',
+    resolutionCoverage: 'Global ~232 m/px visual mosaic & 1:20M geologic map',
+    url: 'https://doi.org/10.3133/sim3292'
+  },
+  {
+    name: 'Slope Gradient & Terrain Roughness Synthesis',
+    missionOrOrg: 'Ares Atlas Terrain Processing (derived from MOLA + HiRISE/CTX)',
+    category: 'Data-derived terrain calculation',
+    provides: 'Local elevation gradients, slope angles, and boulder/dust/crater penalty weights along candidate corridors.',
+    resolutionCoverage: 'Derived wherever elevation and hazard polygons are mapped',
+    url: 'https://swim.psi.edu/'
+  },
+  {
+    name: 'A* Terrain-Aware Route Pathfinder',
+    missionOrOrg: 'Website Simulation (Not an official NASA route)',
+    category: 'Route-planning simulation',
+    provides: 'Balances distance, slope steepness, mapped obstacles, and coverage gaps to suggest a simulated detour route.',
+    resolutionCoverage: 'Simulated path across Arcadia (~9 km grid) or Global Mars (2° grid)',
+    url: 'https://trek.nasa.gov/mars/'
+  }
+];
+
+function isInCtxStrip(lat: number, lonE: number): boolean {
+  return CTX_COVERAGE_STRIPS.some(
+    (s) =>
+      lat >= s.bounds[0][0] &&
+      lat <= s.bounds[1][0] &&
+      lonE >= s.bounds[0][1] &&
+      lonE <= s.bounds[1][1]
+  );
+}
+
+function isInHiriseStrip(lat: number, lonE: number): boolean {
+  return HIRISE_FOOTPRINTS.some(
+    (f) =>
+      lat >= f.bounds[0][0] &&
+      lat <= f.bounds[1][0] &&
+      lonE >= f.bounds[0][1] &&
+      lonE <= f.bounds[1][1]
+  );
+}
+
+function splitMeridianSegments(waypoints: [number, number][]): [number, number][][] {
+  const segments: [number, number][][] = [[]];
+  for (let i = 0; i < waypoints.length; i++) {
+    const [lat, lon] = waypoints[i];
+    const currentSeg = segments[segments.length - 1];
+    if (currentSeg.length > 0) {
+      const prevLon = currentSeg[currentSeg.length - 1][1];
+      if (Math.abs(lon - prevLon) > 180) {
+        const edgePrev = prevLon > 180 ? 360 : 0;
+        const edgeNext = edgePrev === 360 ? 0 : 360;
+        const prevLat = currentSeg[currentSeg.length - 1][0];
+        const midLat = (prevLat + lat) / 2;
+        currentSeg.push([midLat, edgePrev]);
+        segments.push([
+          [midLat, edgeNext],
+          [lat, lon]
+        ]);
+        continue;
+      }
+    }
+    currentSeg.push([lat, lon]);
+  }
+  return segments;
+}
+
+// Compute terrain-aware Martian A* route using Arcadia high-res study datasets
+// or planetary MOLA elevation/slope + USGS hazard data across the globe.
 export function computeTerrainAwareRoute(
   startLat: number,
   startLon: number,
@@ -520,83 +647,246 @@ export function computeTerrainAwareRoute(
   const straightLineKm = Number(marsDistanceKm(startLat, sLon, endLat, eLon).toFixed(1));
   const bothInArcadia = isInsideArcadiaStudy(startLat, sLon) && isInsideArcadiaStudy(endLat, eLon);
 
-  // Outside the Arcadia study corridor: compute true Martian planetary path along shortest longitude delta
-  // without inventing regional elevation or unmapped hazard claims.
+  // =========================================================================
+  // GLOBAL PLANETARY TERRAIN-AWARE A* ROUTE (MOLA + USGS/Mars Trek Hazards)
+  // =========================================================================
   if (!bothInArcadia) {
-    const steps = Math.max(12, Math.min(48, Math.ceil(straightLineKm / 120)));
-    const waypoints: [number, number][] = [];
-    const segments: [number, number][][] = [[]];
+    const aStar = runGlobalMarsAStar(startLat, sLon, endLat, eLon);
+
+    if (!aStar.found || aStar.waypoints.length < 2) {
+      return {
+        routeAvailable: false,
+        blockedReason:
+          aStar.blockedReason ??
+          'No suitable terrain-aware route found based on available Martian elevation and hazard data.',
+        waypoints: [],
+        segments: [],
+        straightLineKm,
+        distanceKm: 0,
+        walkingHours: 0,
+        roverHours: 0,
+        elevationAvailable: true,
+        startElevationM: getGlobalMolaElevationMeters(startLat, sLon),
+        endElevationM: getGlobalMolaElevationMeters(endLat, eLon),
+        maxElevationM: null,
+        minElevationM: null,
+        elevationGainM: null,
+        hazardsNearRoute: [],
+        avoidedHazards: aStar.avoidedObstacles,
+        routeMode: 'global_terrain',
+        isApproximate: true,
+        analysis: {
+          factorsConsidered: [
+            'MOLA planetary elevation & regional slope',
+            'Mapped USGS / Mars Trek canyon & volcano hazards',
+            'Orbital coverage completeness limits (>85° lat)'
+          ],
+          slopeSummary: 'Route blocked by hazardous or unverified terrain',
+          avgSlopeDeg: 0,
+          maxSlopeDeg: 0,
+          roughnessAndCoverageNote:
+            'Route blocked rather than crossing restricted steep scarps or incomplete high-latitude data.',
+          adjustmentReasons: aStar.blockedReason ? [aStar.blockedReason] : [],
+          incompleteDataWarning:
+            'Unknown or unverified regions are never treated as safe terrain.',
+          terrainDifficultyFactor: 1,
+          detourKm: 0,
+          detourPercent: 0
+        }
+      };
+    }
+
+    const waypoints = aStar.waypoints;
+    const segments = splitMeridianSegments(waypoints);
+
+    let distanceKm = 0;
+    let elevationGainM = 0;
+    let prevElev = getGlobalMolaElevationMeters(waypoints[0][0], waypoints[0][1]);
+    let maxElevationM = prevElev;
+    let minElevationM = prevElev;
+    let slopeSum = 0;
+    let maxSlopeDeg = 0;
+    let highLatSteps = 0;
+
+    for (let i = 0; i < waypoints.length; i++) {
+      const [lat, lon] = waypoints[i];
+      if (i > 0) {
+        const segKm = marsDistanceKm(waypoints[i - 1][0], waypoints[i - 1][1], lat, lon);
+        distanceKm += segKm;
+      }
+      const elev = getGlobalMolaElevationMeters(lat, lon);
+      if (elev > prevElev) elevationGainM += elev - prevElev;
+      prevElev = elev;
+      maxElevationM = Math.max(maxElevationM, elev);
+      minElevationM = Math.min(minElevationM, elev);
+
+      const sDeg = getGlobalMolaSlopeDegrees(lat, lon);
+      slopeSum += sDeg;
+      maxSlopeDeg = Math.max(maxSlopeDeg, sDeg);
+      if (Math.abs(lat) > 70) highLatSteps++;
+    }
+
+    const avgSlopeDeg = Number((slopeSum / Math.max(1, waypoints.length)).toFixed(2));
+    const roundedDist = Number(distanceKm.toFixed(1));
+    const detourKm = Number(Math.max(0, roundedDist - straightLineKm).toFixed(1));
+    const detourPercent =
+      straightLineKm > 0 ? Number(((detourKm / straightLineKm) * 100).toFixed(1)) : 0;
+
+    // Compare straight-line elevation gain & max slope to explain real MOLA adjustments honestly
     let dLon = eLon - sLon;
     if (dLon > 180) dLon -= 360;
     if (dLon < -180) dLon += 360;
-
-    for (let i = 0; i <= steps; i++) {
-      const t = i / steps;
+    let straightGainM = 0;
+    let straightPrevElev = getGlobalMolaElevationMeters(startLat, sLon);
+    let straightMaxSlope = 0;
+    for (let k = 1; k <= 24; k++) {
+      const t = k / 24;
       const lat = startLat + (endLat - startLat) * t;
-      const rawLon = sLon + dLon * t;
-      const wrappedLon = normalizeLonE(rawLon);
-      waypoints.push([lat, wrappedLon]);
-
-      const currentSeg = segments[segments.length - 1];
-      if (currentSeg.length > 0) {
-        const prevLon = currentSeg[currentSeg.length - 1][1];
-        if (Math.abs(wrappedLon - prevLon) > 180) {
-          // Split across 0°/360° prime meridian boundary
-          const edgePrev = prevLon > 180 ? 360 : 0;
-          const edgeNext = edgePrev === 360 ? 0 : 360;
-          const prevLat = currentSeg[currentSeg.length - 1][0];
-          const midLat = (prevLat + lat) / 2;
-          currentSeg.push([midLat, edgePrev]);
-          segments.push([
-            [midLat, edgeNext],
-            [lat, wrappedLon]
-          ]);
-          continue;
-        }
-      }
-      currentSeg.push([lat, wrappedLon]);
+      const lon = normalizeLonE(sLon + dLon * t);
+      const e = getGlobalMolaElevationMeters(lat, lon);
+      if (e > straightPrevElev) straightGainM += e - straightPrevElev;
+      straightPrevElev = e;
+      straightMaxSlope = Math.max(straightMaxSlope, getGlobalMolaSlopeDegrees(lat, lon));
     }
 
-    let distanceKm = 0;
-    for (let i = 1; i < waypoints.length; i++) {
-      distanceKm += marsDistanceKm(
-        waypoints[i - 1][0],
-        waypoints[i - 1][1],
-        waypoints[i][0],
-        waypoints[i][1]
+    const adjustmentReasons: string[] = [];
+    for (const ob of aStar.avoidedObstacles) {
+      adjustmentReasons.push(`Route adjusted to detour around ${ob}.`);
+    }
+    if (straightMaxSlope > maxSlopeDeg + 0.5 && straightMaxSlope >= 2.0) {
+      adjustmentReasons.push(
+        `Adjusted across MOLA topography to avoid steeper regional slopes (up to ~${straightMaxSlope.toFixed(
+          1
+        )}° along the direct line vs. ~${maxSlopeDeg.toFixed(1)}° along the selected path).`
       );
     }
-    const roundedDist = Number(distanceKm.toFixed(1));
+    if (straightGainM > elevationGainM + 350) {
+      adjustmentReasons.push(
+        `Shifted along lower-relief Martian plains, reducing cumulative elevation climb by ~${Math.round(
+          straightGainM - elevationGainM
+        )} m.`
+      );
+    }
+    if (adjustmentReasons.length === 0) {
+      adjustmentReasons.push(
+        'Path follows regional MOLA elevation contours with no major mapped planetary canyon or volcano scarps blocking the direct corridor.'
+      );
+    }
+
+    // Terrain difficulty slows walking and rover speeds based on MOLA slope & cumulative climb
+    const climbPer100Km = roundedDist > 0 ? elevationGainM / (roundedDist / 100) : 0;
+    const terrainDifficultyFactor = Number(
+      Math.min(1.55, 1.0 + avgSlopeDeg * 0.08 + Math.min(0.28, climbPer100Km / 3000)).toFixed(2)
+    );
+    const walkingHours = Number(((roundedDist / 3.5) * terrainDifficultyFactor).toFixed(1));
+    const roverDifficulty = 1 + (terrainDifficultyFactor - 1) * 0.85;
+    const roverHours = Number(((roundedDist / 12.0) * roverDifficulty).toFixed(1));
 
     return {
+      routeAvailable: true,
+      blockedReason: null,
       waypoints,
       segments,
       straightLineKm,
       distanceKm: roundedDist,
-      walkingHours: Number((roundedDist / 3.5).toFixed(1)),
-      roverHours: Number((roundedDist / 12.0).toFixed(1)),
-      elevationAvailable: false,
-      startElevationM: isInsideArcadiaStudy(startLat, sLon)
-        ? getArcadiaElevationMeters(startLat, sLon)
-        : null,
-      endElevationM: isInsideArcadiaStudy(endLat, eLon)
-        ? getArcadiaElevationMeters(endLat, eLon)
-        : null,
-      maxElevationM: null,
-      minElevationM: null,
-      elevationGainM: null,
-      hazardsNearRoute: [],
-      routeMode: 'global_approximate',
-      isApproximate: true
+      walkingHours,
+      roverHours,
+      elevationAvailable: true,
+      startElevationM: getGlobalMolaElevationMeters(startLat, sLon),
+      endElevationM: getGlobalMolaElevationMeters(endLat, eLon),
+      maxElevationM,
+      minElevationM,
+      elevationGainM: Math.round(elevationGainM),
+      hazardsNearRoute: aStar.avoidedObstacles,
+      avoidedHazards: aStar.avoidedObstacles,
+      routeMode: 'global_terrain',
+      isApproximate: true,
+      analysis: {
+        factorsConsidered: [
+          'MOLA planetary elevation & inter-cell slope gradients',
+          'Mapped USGS / Mars Trek canyons, volcano scarps & basin rims',
+          'Total Martian spherical route distance',
+          'Data resolution & incomplete high-latitude coverage'
+        ],
+        slopeSummary: `Avg ~${avgSlopeDeg}° regional slope (max ~${maxSlopeDeg}° on 2° MOLA grid)`,
+        avgSlopeDeg,
+        maxSlopeDeg,
+        roughnessAndCoverageNote:
+          'Global planetary mode uses ~463 m/px MOLA elevation (sampled on a 2° routing grid) and USGS SIM 3292 geological boundaries; meter-scale boulders and small craters are NOT resolved globally.',
+        adjustmentReasons,
+        incompleteDataWarning:
+          highLatSteps > 0
+            ? 'Route enters high latitudes (>70°) where orbital context coverage is limited and polar frost/scarp hazards increase; unknown terrain is not treated as safe.'
+            : 'Outside the Arcadia HiRISE/CTX study corridor, small rocks, steep crater rims (<10 km), and soft sand traps are unmapped and must NOT be assumed safe.',
+        terrainDifficultyFactor,
+        detourKm,
+        detourPercent
+      }
     };
   }
 
-  const rows = 44;
-  const cols = 64;
-  const { minLat, maxLat, minLonE, maxLonE } = ARCADIA_STUDY_BOUNDS;
+  // =========================================================================
+  // HIGH-RESOLUTION ARCADIA PLANITIA TERRAIN-AWARE A* (MOLA + HiRISE + CTX)
+  // =========================================================================
+  // Check if user placed start or end strictly inside a confirmed severe hazard core
+  for (const [label, lat, lon] of [
+    ['Starting point', startLat, sLon],
+    ['Destination', endLat, eLon]
+  ] as const) {
+    for (const h of TERRAIN_HAZARDS) {
+      const d = marsDistanceKm(lat, lon, h.lat, h.lonE);
+      const restrictedRatio =
+        h.category === 'boulder_field' ? 0.55 : h.category === 'crater' ? 0.45 : 0;
+      if (restrictedRatio > 0 && d <= h.radiusKm * restrictedRatio) {
+        return {
+          routeAvailable: false,
+          blockedReason: `No suitable route found: ${label} lies inside the restricted core of ${h.name} (${h.sourceLabel}), where ${h.whyItMatters.toLowerCase()}`,
+          waypoints: [],
+          segments: [],
+          straightLineKm,
+          distanceKm: 0,
+          walkingHours: 0,
+          roverHours: 0,
+          elevationAvailable: true,
+          startElevationM: getArcadiaElevationMeters(startLat, sLon),
+          endElevationM: getArcadiaElevationMeters(endLat, eLon),
+          maxElevationM: null,
+          minElevationM: null,
+          elevationGainM: null,
+          hazardsNearRoute: [h.name],
+          avoidedHazards: [h.name],
+          routeMode: 'arcadia_terrain',
+          isApproximate: true,
+          analysis: {
+            factorsConsidered: [
+              'MOLA regional elevation & slope steepness',
+              'MRO HiRISE (~0.3 m/px) boulder fields',
+              'MRO CTX (~6 m/px) crater rims & scalloped depressions'
+            ],
+            slopeSummary: 'Endpoint located inside restricted hazard zone',
+            avgSlopeDeg: 0,
+            maxSlopeDeg: 0,
+            roughnessAndCoverageNote: `${h.name} flagged as restricted in orbital datasets.`,
+            adjustmentReasons: [
+              `Pathfinding halted because ${label.toLowerCase()} sits inside a confirmed ${h.category.replace(
+                '_',
+                ' '
+              )} hazard.`
+            ],
+            incompleteDataWarning:
+              'Move the marker outside the red/orange hazard core to compute a safe detour.',
+            terrainDifficultyFactor: 1,
+            detourKm: 0,
+            detourPercent: 0
+          }
+        };
+      }
+    }
+  }
 
-  const sLat = startLat;
-  const eLat = endLat;
+  const rows = 52;
+  const cols = 76;
+  const { minLat, maxLat, minLonE, maxLonE } = ARCADIA_STUDY_BOUNDS;
 
   const toGrid = (lat: number, lon: number): [number, number] => [
     Math.max(0, Math.min(rows - 1, Math.round(((lat - minLat) / (maxLat - minLat)) * (rows - 1)))),
@@ -608,41 +898,69 @@ export function computeTerrainAwareRoute(
     minLonE + (c / (cols - 1)) * (maxLonE - minLonE)
   ];
 
-  const [sr, sc] = toGrid(sLat, sLon);
-  const [er, ec] = toGrid(eLat, eLon);
+  const [sr, sc] = toGrid(startLat, sLon);
+  const [er, ec] = toGrid(endLat, eLon);
+  const startIdx = sr * cols + sc;
+  const endIdx = er * cols + ec;
 
-  const cellPenalty = new Float32Array(rows * cols);
+  const total = rows * cols;
+  const cellPenalty = new Float32Array(total);
+  const cellBlocked = new Uint8Array(total);
+
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
       const [lat, lon] = toCoord(r, c);
       const slope = getArcadiaSlopeDegrees(lat, lon);
-      let penalty = 1.0 + slope * 0.65;
+      let penalty = 1.0 + slope * 0.9 + (slope > 5 ? (slope - 5) * 1.8 : 0);
+
+      // Slight preference for terrain inside mapped CTX (~6 m/px) or HiRISE (~0.3 m/px) corridors
+      if (!isInCtxStrip(lat, lon) && !isInHiriseStrip(lat, lon)) {
+        penalty += 0.35;
+      }
+
       for (const h of TERRAIN_HAZARDS) {
         const d = marsDistanceKm(lat, lon, h.lat, h.lonE);
-        if (d < h.radiusKm) {
-          const factor = 1 - d / h.radiusKm;
-          if (h.category === 'boulder_field') penalty += 8.5 * factor;
-          else if (h.category === 'crater') penalty += 5.5 * factor;
-          else if (h.category === 'scalloped') penalty += 3.2 * factor;
-          else if (h.category === 'dust_plain') penalty += 1.4 * factor;
+        if (d < h.radiusKm * 1.2) {
+          const factor = Math.max(0, 1 - d / (h.radiusKm * 1.2));
+          if (h.category === 'boulder_field') {
+            if (d < h.radiusKm * 0.55 && idx !== startIdx && idx !== endIdx) {
+              cellBlocked[idx] = 1;
+              penalty += 150;
+            } else {
+              penalty += 16.0 * factor;
+            }
+          } else if (h.category === 'crater') {
+            if (d < h.radiusKm * 0.45 && idx !== startIdx && idx !== endIdx) {
+              cellBlocked[idx] = 1;
+              penalty += 120;
+            } else {
+              penalty += 10.5 * factor;
+            }
+          } else if (h.category === 'scalloped') {
+            penalty += 6.5 * factor;
+          } else if (h.category === 'dust_plain') {
+            penalty += 2.2 * factor;
+          } else if (h.category === 'polygonal_terrain') {
+            penalty += 1.2 * factor;
+          }
         }
       }
-      cellPenalty[r * cols + c] = penalty;
+      cellPenalty[idx] = penalty;
     }
   }
 
-  const total = rows * cols;
   const gScore = new Float64Array(total).fill(Infinity);
   const fScore = new Float64Array(total).fill(Infinity);
   const cameFrom = new Int32Array(total).fill(-1);
   const closed = new Uint8Array(total);
+  const inOpen = new Uint8Array(total);
 
-  const startIdx = sr * cols + sc;
-  const endIdx = er * cols + ec;
   gScore[startIdx] = 0;
-  fScore[startIdx] = marsDistanceKm(sLat, sLon, eLat, eLon);
-
+  fScore[startIdx] = marsDistanceKm(startLat, sLon, endLat, eLon);
   const open: number[] = [startIdx];
+  inOpen[startIdx] = 1;
+
   const dirs = [
     [-1, 0],
     [1, 0],
@@ -666,47 +984,86 @@ export function computeTerrainAwareRoute(
     const cr = Math.floor(curr / cols);
     const cc = curr % cols;
     const [cLat, cLon] = toCoord(cr, cc);
+    const cElev = getArcadiaElevationMeters(cLat, cLon);
 
     for (const [dr, dc] of dirs) {
       const nr = cr + dr;
       const nc = cc + dc;
       if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
       const nIdx = nr * cols + nc;
-      if (closed[nIdx]) continue;
+      if (closed[nIdx] || cellBlocked[nIdx]) continue;
 
       const [nLat, nLon] = toCoord(nr, nc);
       const stepDist = marsDistanceKm(cLat, cLon, nLat, nLon);
-      const cost = stepDist * cellPenalty[nIdx];
+      const nElev = getArcadiaElevationMeters(nLat, nLon);
+      const stepSlopeDeg =
+        (Math.atan(Math.abs(nElev - cElev) / Math.max(500, stepDist * 1000)) * 180) / Math.PI;
+      const avgPenalty = 0.5 * (cellPenalty[curr] + cellPenalty[nIdx]);
+      const cost = stepDist * (avgPenalty + stepSlopeDeg * 0.65);
+
       const tentativeG = gScore[curr] + cost;
       if (tentativeG < gScore[nIdx]) {
         cameFrom[nIdx] = curr;
         gScore[nIdx] = tentativeG;
-        fScore[nIdx] = tentativeG + marsDistanceKm(nLat, nLon, eLat, eLon);
-        if (!open.includes(nIdx)) open.push(nIdx);
+        fScore[nIdx] = tentativeG + marsDistanceKm(nLat, nLon, endLat, eLon);
+        if (!inOpen[nIdx]) {
+          open.push(nIdx);
+          inOpen[nIdx] = 1;
+        }
       }
     }
   }
 
+  if (cameFrom[endIdx] === -1 && startIdx !== endIdx) {
+    return {
+      routeAvailable: false,
+      blockedReason:
+        'No suitable safe corridor found inside Arcadia Planitia without crossing restricted boulder fields or steep crater rims.',
+      waypoints: [],
+      segments: [],
+      straightLineKm,
+      distanceKm: 0,
+      walkingHours: 0,
+      roverHours: 0,
+      elevationAvailable: true,
+      startElevationM: getArcadiaElevationMeters(startLat, sLon),
+      endElevationM: getArcadiaElevationMeters(endLat, eLon),
+      maxElevationM: null,
+      minElevationM: null,
+      elevationGainM: null,
+      hazardsNearRoute: [],
+      avoidedHazards: [],
+      routeMode: 'arcadia_terrain',
+      isApproximate: true,
+      analysis: {
+        factorsConsidered: ['MOLA elevation & slope', 'HiRISE boulder fields', 'CTX crater rims'],
+        slopeSummary: 'No unblocked corridor found',
+        avgSlopeDeg: 0,
+        maxSlopeDeg: 0,
+        roughnessAndCoverageNote: 'Blocked by restricted hazard polygons.',
+        adjustmentReasons: ['All grid paths were blocked by restricted boulder or crater cores.'],
+        incompleteDataWarning: 'Adjust start or destination markers to an open plains location.',
+        terrainDifficultyFactor: 1,
+        detourKm: 0,
+        detourPercent: 0
+      }
+    };
+  }
+
   const rawPoints: [number, number][] = [];
   let trace = endIdx;
-  if (cameFrom[endIdx] !== -1 || startIdx === endIdx) {
-    while (trace !== -1) {
-      const r = Math.floor(trace / cols);
-      const c = trace % cols;
-      rawPoints.push(toCoord(r, c));
-      if (trace === startIdx) break;
-      trace = cameFrom[trace];
-    }
-    rawPoints.reverse();
+  while (trace !== -1) {
+    const r = Math.floor(trace / cols);
+    const c = trace % cols;
+    rawPoints.push(toCoord(r, c));
+    if (trace === startIdx) break;
+    trace = cameFrom[trace];
   }
+  rawPoints.reverse();
 
   const waypoints: [number, number][] =
     rawPoints.length >= 2
-      ? [
-          [startLat, sLon],
-          ...rawPoints.slice(1, -1),
-          [endLat, eLon]
-        ]
+      ? [[startLat, sLon], ...rawPoints.slice(1, -1), [endLat, eLon]]
       : [
           [startLat, sLon],
           [endLat, eLon]
@@ -714,9 +1071,13 @@ export function computeTerrainAwareRoute(
 
   let distanceKm = 0;
   let elevationGainM = 0;
-  let prevElev = getArcadiaElevationMeters(sLat, sLon);
+  let prevElev = getArcadiaElevationMeters(startLat, sLon);
   let maxElevationM = prevElev;
   let minElevationM = prevElev;
+  let slopeSum = 0;
+  let maxSlopeDeg = 0;
+  let ctxCoveredCount = 0;
+  let hiriseCoveredCount = 0;
   const nearSet = new Set<string>();
 
   for (let i = 0; i < waypoints.length; i++) {
@@ -731,29 +1092,140 @@ export function computeTerrainAwareRoute(
     maxElevationM = Math.max(maxElevationM, elev);
     minElevationM = Math.min(minElevationM, elev);
 
+    const sDeg = getArcadiaSlopeDegrees(lat, normLon);
+    slopeSum += sDeg;
+    maxSlopeDeg = Math.max(maxSlopeDeg, sDeg);
+
+    if (isInCtxStrip(lat, normLon)) ctxCoveredCount++;
+    if (isInHiriseStrip(lat, normLon)) hiriseCoveredCount++;
+
     for (const h of TERRAIN_HAZARDS) {
       if (marsDistanceKm(lat, normLon, h.lat, h.lonE) <= h.radiusKm * 1.25) {
-        nearSet.add(`${h.name}`);
+        nearSet.add(h.name);
       }
     }
   }
 
+  const avgSlopeDeg = Number((slopeSum / Math.max(1, waypoints.length)).toFixed(2));
   const roundedDist = Number(distanceKm.toFixed(1));
+  const detourKm = Number(Math.max(0, roundedDist - straightLineKm).toFixed(1));
+  const detourPercent =
+    straightLineKm > 0 ? Number(((detourKm / straightLineKm) * 100).toFixed(1)) : 0;
+
+  // Compare straight-line corridor vs. calculated A* route strictly using actual data
+  const avoidedHazards: string[] = [];
+  let straightMaxSlope = 0;
+  let straightGainM = 0;
+  let straightPrevElev = getArcadiaElevationMeters(startLat, sLon);
+
+  for (let k = 1; k <= 24; k++) {
+    const t = k / 24;
+    const lat = startLat + (endLat - startLat) * t;
+    const lon = normalizeLonE(sLon + (eLon - sLon) * t);
+    const e = getArcadiaElevationMeters(lat, lon);
+    if (e > straightPrevElev) straightGainM += e - straightPrevElev;
+    straightPrevElev = e;
+    straightMaxSlope = Math.max(straightMaxSlope, getArcadiaSlopeDegrees(lat, lon));
+  }
+
+  const adjustmentReasons: string[] = [];
+  for (const h of TERRAIN_HAZARDS) {
+    let minStraightDist = Infinity;
+    for (let k = 0; k <= 24; k++) {
+      const t = k / 24;
+      const lat = startLat + (endLat - startLat) * t;
+      const lon = normalizeLonE(sLon + (eLon - sLon) * t);
+      minStraightDist = Math.min(minStraightDist, marsDistanceKm(lat, lon, h.lat, h.lonE));
+    }
+    if (minStraightDist < h.radiusKm * 1.25) {
+      let minRouteDist = Infinity;
+      for (const [wLat, wLon] of waypoints) {
+        minRouteDist = Math.min(minRouteDist, marsDistanceKm(wLat, wLon, h.lat, h.lonE));
+      }
+      if (minRouteDist > minStraightDist + 2.0) {
+        avoidedHazards.push(h.name);
+        adjustmentReasons.push(
+          `Route adjusted to detour around ${h.name} (${h.sourceLabel}) for safer clearance around the mapped hazard.`
+        );
+      }
+    }
+  }
+
+  if (straightMaxSlope >= 2.0 && straightMaxSlope > maxSlopeDeg + 0.5) {
+    adjustmentReasons.push(
+      `Route adjusted to avoid steeper slopes (up to ${straightMaxSlope.toFixed(
+        1
+      )}° on the direct line vs. max ${maxSlopeDeg.toFixed(1)}° along this path).`
+    );
+  }
+  if (straightGainM > elevationGainM + 45) {
+    adjustmentReasons.push(
+      `Shifted onto lower-gradient plains, reducing cumulative elevation climb by ~${Math.round(
+        straightGainM - elevationGainM
+      )} m.`
+    );
+  }
+  if (adjustmentReasons.length === 0) {
+    adjustmentReasons.push(
+      'Direct corridor crosses gentle northern lowland plains with no mapped boulder fields or steep crater rims intersecting the path.'
+    );
+  }
+
+  const ctxPct = Math.round((ctxCoveredCount / Math.max(1, waypoints.length)) * 100);
+  const hirisePct = Math.round((hiriseCoveredCount / Math.max(1, waypoints.length)) * 100);
+
+  const incompleteDataWarning =
+    ctxPct < 100
+      ? `Only ~${ctxPct}% of this corridor falls inside mapped MRO CTX (6 m/px) strips and ~${hirisePct}% inside MRO HiRISE (0.3 m/px) footprints. Unimaged gaps rely on coarser MOLA elevation and are NOT assumed safe.`
+      : hirisePct < 100
+      ? `Covered by MRO CTX (6 m/px), while only ~${hirisePct}% has ~0.3 m/px HiRISE boulder-scale imagery; sub-meter rocks outside HiRISE strips remain unverified.`
+      : null;
+
+  // Travel-time difficulty scaling accounts for slope steepness and hazard proximity
+  const nearHazardExtra = nearSet.size * 0.04;
+  const terrainDifficultyFactor = Number(
+    Math.min(1.5, 1.0 + avgSlopeDeg * 0.07 + nearHazardExtra).toFixed(2)
+  );
+  const walkingHours = Number(((roundedDist / 3.5) * terrainDifficultyFactor).toFixed(1));
+  const roverDifficulty = 1 + (terrainDifficultyFactor - 1) * 0.85;
+  const roverHours = Number(((roundedDist / 12.0) * roverDifficulty).toFixed(1));
+
   return {
+    routeAvailable: true,
+    blockedReason: null,
     waypoints,
     segments: [waypoints],
     straightLineKm,
     distanceKm: roundedDist,
-    walkingHours: Number((roundedDist / 3.5).toFixed(1)),
-    roverHours: Number((roundedDist / 12.0).toFixed(1)),
+    walkingHours,
+    roverHours,
     elevationAvailable: true,
-    startElevationM: getArcadiaElevationMeters(sLat, sLon),
-    endElevationM: getArcadiaElevationMeters(eLat, eLon),
+    startElevationM: getArcadiaElevationMeters(startLat, sLon),
+    endElevationM: getArcadiaElevationMeters(endLat, eLon),
     maxElevationM,
     minElevationM,
     elevationGainM: Math.round(elevationGainM),
     hazardsNearRoute: Array.from(nearSet),
+    avoidedHazards,
     routeMode: 'arcadia_terrain',
-    isApproximate: true
+    isApproximate: true,
+    analysis: {
+      factorsConsidered: [
+        'MOLA regional elevation & slope steepness',
+        'HiRISE (~0.3 m/px) boulder fields & crater scarps',
+        'CTX (~6 m/px) scalloped & dust-mantle plains',
+        'Total terrain-aware route distance'
+      ],
+      slopeSummary: `Avg ${avgSlopeDeg}° slope (max ${maxSlopeDeg}° along corridor)`,
+      avgSlopeDeg,
+      maxSlopeDeg,
+      roughnessAndCoverageNote: `CTX 6 m/px coverage: ~${ctxPct}% of waypoints · HiRISE 0.3 m/px coverage: ~${hirisePct}% of waypoints.`,
+      adjustmentReasons,
+      incompleteDataWarning,
+      terrainDifficultyFactor,
+      detourKm,
+      detourPercent
+    }
   };
 }
+

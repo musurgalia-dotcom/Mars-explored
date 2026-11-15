@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import {
   AlertTriangle,
+  BookOpen,
   ChevronDown,
   ChevronUp,
   CloudLightning,
@@ -17,6 +18,7 @@ import {
   RefreshCw,
   RotateCcw,
   Route as RouteIcon,
+  ShieldAlert,
   Thermometer,
   Trash2,
   Wind,
@@ -29,6 +31,7 @@ import {
   HIRISE_FOOTPRINTS,
   INVESTIGATION_STOPS,
   PROPOSED_HABITAT,
+  ROUTE_SCIENTIFIC_SOURCES,
   SUBSURFACE_ICE_ZONES,
   TERRAIN_HAZARDS,
   computeTerrainAwareRoute,
@@ -43,6 +46,7 @@ import {
   SubsurfaceIceZone,
   TerrainHazard
 } from '../data/arcadiaData';
+import { getGlobalMolaElevationMeters, getGlobalMolaSlopeDegrees } from '../data/marsGlobalTerrain';
 import { MARS_LOCATIONS, MarsLocation, findMatchingMarsLocation } from '../data/marsLocations';
 import { MEASURED_MARS_STATIONS, MeasuredStationRecord } from '../data/marsWeatherStations';
 import {
@@ -210,6 +214,7 @@ export default function ExpeditionMap2D() {
   const [showArcadiaLayers, setShowArcadiaLayers] = useState(true);
   const [showElevationRelief, setShowElevationRelief] = useState(false);
   const [layersDrawerOpen, setLayersDrawerOpen] = useState(false);
+  const [howCalculatedOpen, setHowCalculatedOpen] = useState(true);
   const [selectedNavFeature, setSelectedNavFeature] = useState<SelectedNavigatorFeature | null>(
     null
   );
@@ -754,8 +759,12 @@ export default function ExpeditionMap2D() {
         lat: navLat,
         lon: normLon,
         insideArcadia,
-        elevationM: insideArcadia ? getArcadiaElevationMeters(navLat, normLon) : null,
-        slopeDeg: insideArcadia ? getArcadiaSlopeDegrees(navLat, normLon) : null,
+        elevationM: insideArcadia
+          ? getArcadiaElevationMeters(navLat, normLon)
+          : getGlobalMolaElevationMeters(navLat, normLon),
+        slopeDeg: insideArcadia
+          ? getArcadiaSlopeDegrees(navLat, normLon)
+          : getGlobalMolaSlopeDegrees(navLat, normLon),
         hiriseCovered,
         inCtx,
         inIceZone
@@ -774,7 +783,9 @@ export default function ExpeditionMap2D() {
         lat,
         lon: normLon,
         insideArcadia: inside,
-        elevM: inside ? getArcadiaElevationMeters(lat, normLon) : null
+        elevM: inside
+          ? getArcadiaElevationMeters(lat, normLon)
+          : getGlobalMolaElevationMeters(lat, normLon)
       });
     });
 
@@ -880,7 +891,28 @@ export default function ExpeditionMap2D() {
     if (!group) return;
     group.clearLayers();
 
-    if (routeResult && routeResult.segments.length >= 1) {
+    if (routeResult && routeResult.routeAvailable && routeResult.segments.length >= 1) {
+      // Optional faint straight-line reference when route detours >= 3 km around hazards/slopes
+      if (astronautPos && destinationPos && routeResult.analysis.detourKm >= 3) {
+        const sLon = normalizeLonE(astronautPos[1]);
+        const eLon = normalizeLonE(destinationPos[1]);
+        if (Math.abs(eLon - sLon) <= 180) {
+          L.polyline(
+            [
+              [astronautPos[0], sLon],
+              [destinationPos[0], eLon]
+            ],
+            {
+              color: '#94A3B8',
+              weight: 1.5,
+              opacity: 0.45,
+              dashArray: '4 6',
+              interactive: false
+            }
+          ).addTo(group);
+        }
+      }
+
       L.polyline(routeResult.segments, {
         color: '#16A34A',
         weight: 6,
@@ -891,7 +923,7 @@ export default function ExpeditionMap2D() {
         color: '#22C55E',
         weight: 3.5,
         opacity: 0.96,
-        dashArray: routeResult.routeMode === 'global_approximate' ? '8 6' : undefined
+        dashArray: routeResult.routeMode === 'global_terrain' ? '8 5' : undefined
       }).addTo(group);
     }
 
@@ -1283,8 +1315,8 @@ export default function ExpeditionMap2D() {
                 {!basemapLoading && (
                   <span>
                     {mapMode === 'navigator'
-                      ? cursorInfo.insideArcadia && cursorInfo.elevM !== null
-                        ? `Arcadia MOLA Elev: ${cursorInfo.elevM} m`
+                      ? cursorInfo.elevM !== null
+                        ? `${cursorInfo.insideArcadia ? 'Arcadia' : 'Global'} MOLA Elev: ${cursorInfo.elevM} m`
                         : 'Click any landmark or terrain point'
                       : mapMode === 'temperature'
                       ? 'Click any landmark or surface point for temperature'
@@ -1496,6 +1528,118 @@ export default function ExpeditionMap2D() {
               </div>
             )}
           </div>
+
+          {/* HOW ROUTE IS CALCULATED + SCIENTIFIC DATA SOURCES (NAVIGATOR MODE) */}
+          {mapMode === 'navigator' && (
+            <div className="space-y-3">
+              {/* 4. How is the astronaut route calculated? */}
+              <div className="rounded-xl border border-white/10 bg-[#0D111A] p-4 space-y-3 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setHowCalculatedOpen((v) => !v)}
+                  className="w-full flex items-center justify-between gap-2 text-left cursor-pointer"
+                  aria-expanded={howCalculatedOpen}
+                >
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-[#F4845F] shrink-0" />
+                    <h2 className="font-display text-sm sm:text-base font-bold text-white">
+                      How is the astronaut route calculated?
+                    </h2>
+                  </div>
+                  {howCalculatedOpen ? (
+                    <ChevronUp className="h-4 w-4 text-slate-400 shrink-0" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-slate-400 shrink-0" />
+                  )}
+                </button>
+
+                {howCalculatedOpen && (
+                  <div className="space-y-3 pt-2 border-t border-white/10 text-slate-300 leading-relaxed">
+                    <p>
+                      Our route planner does not simply connect two points with a straight line. It
+                      analyses available scientific data about the Martian surface, including
+                      elevation, slopes, craters, and mapped terrain hazards. It then uses a
+                      pathfinding algorithm to find a suitable route that avoids known dangerous or
+                      difficult areas whenever possible.
+                    </p>
+                    <p>
+                      The calculations use scientific datasets from NASA missions and other verified
+                      research sources. The suggested route is generated by our website using these
+                      datasets. It is a research-based simulation, not an official NASA-approved
+                      route or a guarantee of astronaut safety.
+                    </p>
+                    <div className="rounded-lg border border-sky-500/25 bg-sky-500/10 p-3 text-sky-100">
+                      <strong className="text-sky-300">Why may a route be longer?</strong> A
+                      straight line may be the shortest distance, but it can cross steep slopes,
+                      craters, or rough terrain. A longer route may be more suitable because it
+                      avoids some of these obstacles.
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 6. Scientific Data Sources & Limitations */}
+              <div className="rounded-xl border border-white/10 bg-[#0D111A] p-4 space-y-3 text-xs">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h2 className="font-display text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                    <Info className="h-4 w-4 text-sky-400 shrink-0" />
+                    <span>Scientific Data Sources</span>
+                  </h2>
+                  <span className="text-[11px] text-slate-400">
+                    Observations vs. Derived Terrain vs. Route Simulation
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  {ROUTE_SCIENTIFIC_SOURCES.map((src) => (
+                    <div
+                      key={src.name}
+                      className="rounded-lg border border-white/10 bg-[#121723] p-3 space-y-1.5"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-1.5">
+                        <span
+                          className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+                            src.category === 'Direct scientific observation'
+                              ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                              : src.category === 'Data-derived terrain calculation'
+                              ? 'bg-sky-500/15 text-sky-300 border border-sky-500/30'
+                              : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                          }`}
+                        >
+                          {src.category}
+                        </span>
+                      </div>
+                      <div className="font-display font-bold text-white text-xs sm:text-sm">
+                        {src.name}
+                      </div>
+                      <div className="text-[11px] text-[#F4845F]">{src.missionOrOrg}</div>
+                      <p className="text-[11px] text-slate-300 leading-relaxed">{src.provides}</p>
+                      <div className="text-[11px] text-slate-400">
+                        <strong className="text-slate-300">Resolution / Coverage:</strong>{' '}
+                        {src.resolutionCoverage}
+                      </div>
+                      <a
+                        href={src.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] text-sky-400 hover:underline pt-0.5"
+                      >
+                        <span>Official Source Reference</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-[11px] text-amber-200 leading-relaxed">
+                  <strong>Coverage Limitation Notice:</strong> High-resolution HiRISE (~0.3 m/px)
+                  and CTX (~6 m/px) imagery cover only selected corridors on Mars. Where orbital
+                  imagery is incomplete, the planner relies on coarser MOLA elevation data and
+                  explicitly flags uncertainty—unknown terrain is never treated as safe terrain.
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* RIGHT COLUMN: INSPECTOR & ROUTE PLANNER */}
@@ -1596,84 +1740,168 @@ export default function ExpeditionMap2D() {
                 </div>
 
                 {routeResult ? (
-                  <div className="space-y-3 border-t border-white/10 pt-3 text-xs">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5">
-                        <div className="text-slate-400">Distance</div>
-                        <div className="font-mono text-lg font-bold text-emerald-400 tabular-nums mt-0.5">
-                          {routeResult.distanceKm} km
+                  routeResult.routeAvailable ? (
+                    <div className="space-y-3 border-t border-white/10 pt-3 text-xs">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5">
+                          <div className="text-slate-400">Terrain-Aware Distance</div>
+                          <div className="font-mono text-lg font-bold text-emerald-400 tabular-nums mt-0.5">
+                            {routeResult.distanceKm} km
+                          </div>
+                          <div className="text-[11px] text-slate-400 tabular-nums">
+                            Straight line: {routeResult.straightLineKm} km
+                            {routeResult.analysis.detourKm > 0
+                              ? ` (+${routeResult.analysis.detourKm} km)`
+                              : ''}
+                          </div>
                         </div>
-                        <div className="text-[11px] text-slate-500 tabular-nums">
-                          Direct: {routeResult.straightLineKm} km
+
+                        <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5">
+                          <div className="text-slate-400">Terrain Elevation</div>
+                          <div className="font-mono text-base font-bold text-white tabular-nums mt-0.5">
+                            {routeResult.elevationAvailable && routeResult.elevationGainM !== null
+                              ? `+${routeResult.elevationGainM} m gain`
+                              : 'Unavailable'}
+                          </div>
+                          <div className="text-[11px] text-slate-400 tabular-nums">
+                            {routeResult.elevationAvailable &&
+                            routeResult.minElevationM !== null &&
+                            routeResult.maxElevationM !== null
+                              ? `${routeResult.minElevationM} to ${routeResult.maxElevationM} m`
+                              : 'Elevation data unavailable'}
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5">
+                          <div className="text-slate-400">Approx. Walking Time</div>
+                          <div className="font-mono text-base font-bold text-white tabular-nums mt-0.5">
+                            ~{routeResult.walkingHours} hrs
+                          </div>
+                          <div className="text-[11px] text-slate-400">
+                            Approx. · {routeResult.analysis.terrainDifficultyFactor}× terrain factor
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5">
+                          <div className="text-slate-400">Approx. Rover Driving</div>
+                          <div className="font-mono text-base font-bold text-white tabular-nums mt-0.5">
+                            ~{routeResult.roverHours} hrs
+                          </div>
+                          <div className="text-[11px] text-slate-400">
+                            Approx. · slope-adjusted speed
+                          </div>
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5">
-                        <div className="text-slate-400">Terrain Elevation</div>
-                        <div className="font-mono text-base font-bold text-white tabular-nums mt-0.5">
-                          {routeResult.elevationAvailable && routeResult.elevationGainM !== null
-                            ? `+${routeResult.elevationGainM} m gain`
-                            : 'Unavailable'}
-                        </div>
-                        <div className="text-[11px] text-slate-500 tabular-nums">
-                          {routeResult.elevationAvailable &&
-                          routeResult.minElevationM !== null &&
-                          routeResult.maxElevationM !== null
-                            ? `${routeResult.minElevationM} to ${routeResult.maxElevationM} m`
-                            : 'Outside Arcadia MOLA grid'}
-                        </div>
-                      </div>
-
-                      <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5">
-                        <div className="text-slate-400">Approx. Walking Time</div>
-                        <div className="font-mono text-base font-bold text-white tabular-nums mt-0.5">
-                          ~{routeResult.walkingHours} hrs
-                        </div>
-                        <div className="text-[11px] text-slate-500">Assumes 3.5 km/h EVA</div>
-                      </div>
-
-                      <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5">
-                        <div className="text-slate-400">Approx. Rover Driving</div>
-                        <div className="font-mono text-base font-bold text-white tabular-nums mt-0.5">
-                          ~{routeResult.roverHours} hrs
-                        </div>
-                        <div className="text-[11px] text-slate-500">Assumes 12 km/h drive</div>
+                      <div className="rounded-md border border-white/10 bg-[#0B0E15] p-2.5 text-[11px] text-slate-400 leading-relaxed">
+                        <strong className="text-slate-300">Estimate Notice:</strong> Distances use
+                        true Martian coordinates (R = 3,389.5 km). Walking and rover driving times
+                        are approximate terrain-adjusted estimates—not guaranteed travel durations
+                        or official safety assessments.
                       </div>
                     </div>
-
-                    {routeResult.routeMode === 'arcadia_terrain' ? (
-                      <div className="rounded-md border border-white/10 bg-[#121723] p-2.5 text-slate-300 space-y-1">
-                        <div className="font-semibold text-white">
-                          Terrain Along Arcadia Route
+                  ) : (
+                    <div className="space-y-3 border-t border-white/10 pt-3 text-xs">
+                      <div className="rounded-lg border border-red-500/45 bg-red-500/15 p-3 space-y-2">
+                        <div className="flex items-center gap-2 font-bold text-red-300">
+                          <ShieldAlert className="h-4 w-4 shrink-0" />
+                          <span>No Suitable Route Found</span>
                         </div>
-                        <p className="leading-relaxed">
-                          {routeResult.hazardsNearRoute.length > 0
-                            ? `Passes near: ${routeResult.hazardsNearRoute.join(' · ')}.`
-                            : 'Crosses gently sloping Arcadia northern lowland plains.'}
+                        <p className="text-red-100 leading-relaxed">
+                          {routeResult.blockedReason}
                         </p>
+                        <div className="text-[11px] text-red-200/80 font-mono tabular-nums">
+                          Direct straight-line gap: {routeResult.straightLineKm} km (not shown as a
+                          navigable route).
+                        </div>
                       </div>
-                    ) : (
-                      <div className="rounded-md border border-amber-500/25 bg-amber-500/10 p-2.5 text-amber-200 leading-relaxed">
-                        Detailed slope and terrain-hazard data are unavailable outside the Arcadia
-                        Planitia study corridor; showing a spherical Mars great-circle route.
-                      </div>
-                    )}
-
-                    <div className="rounded-md border border-white/10 bg-[#0B0E15] p-2.5 text-[11px] text-slate-400 leading-relaxed">
-                      <strong className="text-slate-300">Estimate Notice:</strong> Distances use
-                      true Martian coordinates (R = 3,389.5 km). Walking and rover driving times are
-                      rough educational estimates—not guaranteed travel durations or mission safety
-                      assessments.
                     </div>
-                  </div>
+                  )
                 ) : (
                   <div className="rounded-md border border-white/10 bg-[#111622] p-3 text-xs text-slate-300">
                     Place both the <strong>Green Astronaut dot</strong> and{' '}
-                    <strong>Red Destination dot</strong> to calculate distance and estimated travel
-                    times.
+                    <strong>Red Destination dot</strong> to calculate a terrain-aware route and
+                    estimated travel times.
                   </div>
                 )}
               </div>
+
+              {/* 5. Route Analysis Card */}
+              {routeResult && (
+                <div className="rounded-xl border border-white/10 bg-[#0D111A] p-4 space-y-3 text-xs">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="font-display text-sm font-bold text-white flex items-center gap-2">
+                      <Compass className="h-4 w-4 text-sky-400 shrink-0" />
+                      <span>Route Analysis</span>
+                    </h2>
+                    <span className="rounded px-2 py-0.5 text-[10px] font-semibold bg-[#141A28] border border-white/10 text-slate-300">
+                      {routeResult.routeMode === 'arcadia_terrain'
+                        ? 'Arcadia Hi-Res Grid'
+                        : 'Global MOLA Grid'}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="rounded-lg border border-white/10 bg-[#121723] p-2.5 space-y-1.5">
+                      <div className="text-[11px] font-semibold text-slate-300">
+                        Factors Considered
+                      </div>
+                      <ul className="space-y-1 text-[11px] text-slate-400 list-disc pl-4">
+                        <li>
+                          <strong className="text-slate-200">Terrain Elevation:</strong>{' '}
+                          {routeResult.routeAvailable &&
+                          routeResult.minElevationM !== null &&
+                          routeResult.maxElevationM !== null
+                            ? `${routeResult.minElevationM} m to ${routeResult.maxElevationM} m (+${routeResult.elevationGainM} m climb)`
+                            : 'Checked via MOLA datum model'}
+                        </li>
+                        <li>
+                          <strong className="text-slate-200">Slope Steepness:</strong>{' '}
+                          {routeResult.analysis.slopeSummary}
+                        </li>
+                        <li>
+                          <strong className="text-slate-200">Surface Roughness &amp; Imagery:</strong>{' '}
+                          {routeResult.analysis.roughnessAndCoverageNote}
+                        </li>
+                        <li>
+                          <strong className="text-slate-200">Craters &amp; Mapped Hazards:</strong>{' '}
+                          {routeResult.avoidedHazards.length > 0
+                            ? `Detoured around ${routeResult.avoidedHazards.join('; ')}`
+                            : routeResult.hazardsNearRoute.length > 0
+                            ? `Passes near: ${routeResult.hazardsNearRoute.join('; ')}`
+                            : 'No mapped crater rims, canyon scarps, or boulder fields intersecting path'}
+                        </li>
+                        <li>
+                          <strong className="text-slate-200">Total Route Distance:</strong>{' '}
+                          {routeResult.routeAvailable
+                            ? `${routeResult.distanceKm} km (${routeResult.analysis.detourKm} km longer than straight line)`
+                            : `Blocked (${routeResult.straightLineKm} km direct)`}
+                        </li>
+                      </ul>
+                    </div>
+
+                    {routeResult.analysis.adjustmentReasons.length > 0 && (
+                      <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/10 p-2.5 space-y-1">
+                        <div className="font-semibold text-emerald-300 text-[11px]">
+                          Why This Path Was Chosen
+                        </div>
+                        {routeResult.analysis.adjustmentReasons.map((reason, idx) => (
+                          <p key={idx} className="text-[11px] text-emerald-100 leading-relaxed">
+                            • {reason}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+
+                    {routeResult.analysis.incompleteDataWarning && (
+                      <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-2.5 text-[11px] text-amber-200 leading-relaxed">
+                        <strong>Incomplete Data Notice:</strong>{' '}
+                        {routeResult.analysis.incompleteDataWarning}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Selected Landmark / Feature Information Panel */}
               {selectedNavFeature && (
@@ -1834,17 +2062,26 @@ export default function ExpeditionMap2D() {
                       <div className="font-mono text-sm font-bold text-white tabular-nums">
                         {formatMarsCoords(selectedNavFeature.lat, selectedNavFeature.lon)}
                       </div>
-                      {selectedNavFeature.insideArcadia && selectedNavFeature.elevationM !== null ? (
-                        <div className="text-slate-300">
-                          Arcadia MOLA Elevation:{' '}
-                          <strong className="text-white">{selectedNavFeature.elevationM} m</strong>{' '}
-                          · Slope:{' '}
-                          <strong className="text-white">{selectedNavFeature.slopeDeg}°</strong>
+                      {selectedNavFeature.elevationM !== null ? (
+                        <div className="space-y-1 text-slate-300">
+                          <div>
+                            {selectedNavFeature.insideArcadia
+                              ? 'Arcadia MOLA Elevation:'
+                              : 'Global MOLA Elevation:'}{' '}
+                            <strong className="text-white">{selectedNavFeature.elevationM} m</strong>{' '}
+                            · Slope:{' '}
+                            <strong className="text-white">{selectedNavFeature.slopeDeg}°</strong>
+                          </div>
+                          {!selectedNavFeature.insideArcadia && (
+                            <div className="text-[11px] text-amber-300/90">
+                              Outside Arcadia HiRISE/CTX study corridors — regional 2° MOLA
+                              topography shown; meter-scale rocks and small craters are unverified.
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="text-slate-400">
-                          Outside Arcadia study grid — NASA Viking global terrain shown; detailed
-                          elevation/slope unavailable.
+                          Elevation/slope data unavailable at this location.
                         </div>
                       )}
                       <div className="grid grid-cols-2 gap-2 pt-1">
