@@ -1,0 +1,6 @@
+{
+  "name": "Ares Planetary Explorer",
+  "description": "Scientific Mars exploration platform featuring a 3D Mars globe, Arcadia Planitia 2D expedition map, NASA mission archives, and astronaut safety reference.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

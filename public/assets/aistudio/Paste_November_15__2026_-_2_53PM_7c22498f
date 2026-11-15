@@ -1,0 +1,1324 @@
+COMPLETE WEBSITE DEVELOPMENT AND REDESIGN BRIEF — MARS EXPLORATION PLATFORM
+
+IMPORTANT: READ THE ENTIRE INSTRUCTION BEFORE MAKING CHANGES
+
+I want you to build and improve my existing Mars exploration website.
+
+This is a scientific and interactive educational project about Mars exploration, NASA missions, Martian geography, and astronaut safety.
+
+I do not want a simple informational website or a generic AI-generated template.
+
+I want a professional, visually impressive, scientifically accurate Mars exploration platform with a realistic 3D Mars globe, an interactive 2D expedition map, detailed scientific information, NASA mission galleries, and real images.
+
+The website must look and feel like a real planetary exploration interface.
+
+Do not just create a visual mockup. Implement the interactions, navigation, maps, animations, and data connections as far as the platform and available integrations allow.
+
+If Webflow cannot implement a feature natively, use an appropriate custom code component, JavaScript integration, Three.js, or an external scientific map service. Do not replace a required feature with a static illustration.
+
+First inspect the existing project and preserve all useful content and functionality.
+
+⸻
+
+1. OVERALL WEBSITE STRUCTURE
+
+Create a polished website with the following main navigation:
+
+1. Home
+2. Mars Explorer — 3D Mars Globe
+3. 2D Expedition Map
+4. NASA Missions
+5. About Mars
+6. Sources
+
+The website should have a consistent visual identity.
+
+Design direction
+
+Use a premium scientific space-exploration aesthetic inspired by NASA/JPL mission interfaces.
+
+Visual style:
+
+* Dark space-inspired background.
+* Realistic Mars surface imagery.
+* Deep charcoal and black interface surfaces.
+* Warm Martian red and orange accents.
+* White and light-grey typography.
+* Subtle blue, green, yellow, and purple data indicators.
+* Clean scientific information panels.
+* Smooth transitions.
+* Carefully organized layouts.
+* Professional maps and image galleries.
+
+Avoid:
+
+* Excessive gradients.
+* Random glowing effects.
+* Too many decorative elements.
+* Generic AI-looking cards.
+* Unnecessary animations.
+* Repetitive text.
+* Fake scientific data.
+* Random stock images.
+* Overcrowded interfaces.
+
+Use consistent spacing, typography, buttons, cards, and navigation.
+
+The website must be responsive and work on desktop, tablet, and mobile.
+
+⸻
+
+2. HOME PAGE
+
+The homepage should immediately communicate that this is an interactive Mars exploration platform.
+
+Main hero section
+
+Include:
+
+* A large realistic 3D Mars globe.
+* A clear project title.
+* A short description of the platform.
+* A button leading to the 3D explorer.
+* A button leading to the 2D expedition map.
+
+The planet should be the main visual focus.
+
+Do not use a static orange planet image.
+
+The globe must be interactive and genuinely three-dimensional.
+
+Additional homepage sections
+
+Include attractive preview sections for:
+
+* Explore Mars.
+* Arcadia Planitia expedition.
+* NASA missions.
+* Important Martian locations.
+* Scientific discoveries.
+* Astronaut safety.
+
+Each section should contain real imagery and a short, informative description.
+
+⸻
+
+3. REALISTIC 3D MARS GLOBE — HIGHEST PRIORITY
+
+The 3D Mars model must look as close as possible to the actual planet.
+
+I want a scientifically accurate 3D representation of Mars, not a decorative orange sphere.
+
+3.1 Actual planetary appearance
+
+Use:
+
+* Real Mars surface textures.
+* NASA/JPL imagery.
+* Accurate planetary geography.
+* Correctly positioned geographical features.
+* Real latitude and longitude coordinates.
+* Actual Martian surface formations.
+
+The globe should visibly include recognizable features such as:
+
+* Olympus Mons.
+* Valles Marineris.
+* Jezero Crater.
+* Gale Crater.
+* Major impact craters.
+* Volcanic plains.
+* Polar ice caps.
+* Large Martian plains.
+
+Use real elevation or topographic information where available.
+
+The geographical positions and proportions of these features must be consistent with real Mars.
+
+The globe must not use randomly generated craters or fictional geographical formations.
+
+3.2 Fix the existing rotation problem
+
+There is a serious problem with the current 3D implementation.
+
+When the user drags the globe, only the meridians, longitude lines, latitude lines, or coordinate grid move. The actual Mars sphere and its surface do not rotate properly.
+
+This must be completely fixed.
+
+Inspect the actual 3D implementation.
+
+Check:
+
+* The scene hierarchy.
+* The Mars sphere.
+* The texture mapping.
+* The coordinate grid.
+* The marker positions.
+* The camera.
+* The drag controls.
+* OrbitControls or equivalent controls.
+* Parent and child object transformations.
+
+The correct result must be:
+
+The entire Mars planet rotates as one coherent 3D object.
+
+The following elements must remain attached to their correct geographical positions:
+
+* Planet surface texture.
+* Latitude lines.
+* Longitude lines.
+* Red markers.
+* Green markers.
+* Other location markers.
+
+Do not rotate only the coordinate grid.
+
+Do not allow the texture to remain stationary while the grid moves.
+
+Do not allow markers to float independently around the sphere.
+
+Apply rotation to the correct parent object or planetary group.
+
+The planet itself must visibly rotate when dragged.
+
+3.3 Interaction controls
+
+Implement:
+
+* Click and drag to rotate Mars.
+* Smooth camera orbit.
+* Zoom in and out.
+* Mouse wheel zoom.
+* Touch gestures on mobile.
+* Reset camera button.
+* Smooth location focusing.
+* Full globe navigation.
+
+Allow users to explore both hemispheres.
+
+Avoid sudden camera jumps or unnatural rotation.
+
+3.4 Location markers
+
+Keep multiple red and green markers distributed across the globe.
+
+Use actual geographical coordinates for real locations.
+
+Include a visible legend explaining the meaning of red and green markers.
+
+Markers must be attached to the spherical surface.
+
+They must remain in the correct positions when the planet rotates or zooms.
+
+3.5 Clicking a location
+
+When the user clicks a marker:
+
+1. Select the corresponding location.
+2. Highlight its marker.
+3. Rotate Mars toward the selected location.
+4. Smoothly zoom in.
+5. Keep the selected geographical position centered or clearly visible.
+6. Open a detailed information panel on the side.
+
+The information panel must not cover the entire globe.
+
+The planet must remain visible while the user reads the information.
+
+3.6 Detailed location information
+
+Each location must have its own scientifically accurate information.
+
+Display:
+
+* Official name.
+* Location type.
+* Latitude.
+* Longitude.
+* Elevation or height.
+* Geological characteristics.
+* Interesting facts.
+* Scientific importance.
+* Relevance to future NASA exploration.
+* Real photographs.
+* Scientific source links.
+
+Example: Olympus Mons
+
+Title: Olympus Mons.
+
+Location type: Shield volcano.
+
+Include:
+
+* Scientifically supported elevation.
+* Explanation of the elevation reference.
+* Its enormous size.
+* Geological structure.
+* Volcanic history.
+* Interesting scientific facts.
+* Why scientists study it.
+* Relevance to future planetary exploration.
+
+Use several interesting facts rather than one generic sentence.
+
+Include a real image of Olympus Mons with its source attribution.
+
+Other locations
+
+Provide unique information for:
+
+* Jezero Crater.
+* Gale Crater.
+* Valles Marineris.
+* Martian Polar Ice Caps.
+* Utopia Planitia.
+* Arcadia Planitia.
+* Other important existing locations.
+
+Do not repeat identical descriptions for different places.
+
+Do not invent coordinates, heights, or scientific discoveries.
+
+⸻
+
+4. 2D EXPEDITION MAP — ARCADIA PLANITIA
+
+This is the second most important part of the website.
+
+The 2D map must become a realistic interactive scientific map for a proposed astronaut expedition in Arcadia Planitia.
+
+It is not supposed to be a temperature map.
+
+Do not create a temperature heatmap, colourful temperature overlay, or a separate temperature visualization inside the 2D Navigator.
+
+The main map must show the actual Martian surface.
+
+The map should combine real geographical imagery, topography, potential subsurface ice information, scientific targets, hazards, and a proposed astronaut route.
+
+4.1 Chosen study area: Arcadia Planitia
+
+Arcadia Planitia is a broad plain in the northern mid-latitudes of Mars.
+
+It is scientifically interesting because several orbital observations suggest that ice-rich material may exist beneath parts of its surface.
+
+This makes it relevant to future human exploration.
+
+Underground ice could potentially become a resource for a future settlement, but its exact depth, purity, and accessibility must be investigated.
+
+The map should help viewers understand why this region is scientifically important.
+
+4.2 Real Martian surface — default map
+
+The default map must look like an actual satellite map of Mars.
+
+Use genuine Martian surface imagery from:
+
+* NASA Mars Trek.
+* Mars Reconnaissance Orbiter CTX.
+* Mars Reconnaissance Orbiter HiRISE.
+* USGS planetary imagery.
+* Other verified NASA planetary datasets.
+
+The map should show natural Martian terrain:
+
+* Craters.
+* Ridges.
+* Rounded hills.
+* Valleys.
+* Dust-covered plains.
+* Geological formations.
+* Surface textures.
+* Natural variations in colour.
+
+Use realistic reddish-brown, dusty, grey, and dark terrain.
+
+Do not use:
+
+* Abstract colourful maps.
+* Random colour patches.
+* Fictional landscapes.
+* Earth satellite imagery.
+* Generic Mars illustrations.
+* Artificial elevation colours as the default background.
+
+The default map must display the real Martian surface.
+
+When the user zooms in, display more detailed imagery where available.
+
+If high-resolution imagery is not available for an area, clearly indicate the actual coverage.
+
+Do not pretend that every part of Mars has the same image resolution.
+
+4.3 Geographic accuracy
+
+The map must use accurate Martian geographical coordinates and a suitable planetary projection.
+
+Users must be able to:
+
+* Zoom in and out.
+* Move around the map.
+* Select locations.
+* View latitude and longitude.
+* Identify geological formations.
+* Measure distances.
+* See the selected study boundary.
+
+All markers must correspond to actual geographical locations or be clearly labeled as proposed investigation points.
+
+⸻
+
+5. INTERACTIVE NASA DATA LAYERS
+
+Create a layer-control panel for the 2D expedition map.
+
+Users must be able to turn each layer on and off.
+
+The real surface must remain visible underneath.
+
+Use semi-transparent overlays.
+
+Do not cover the map with opaque coloured areas.
+
+5.1 Base Map
+
+Source: NASA Mars Trek.
+
+Purpose:
+
+* General surface view.
+* Geographical context.
+* Background for the other layers.
+
+This must be enabled by default.
+
+5.2 Elevation and Topography
+
+Source: Mars Global Surveyor — MOLA.
+
+Show:
+
+* Surface elevation.
+* Broad depressions.
+* Elevated terrain.
+* Topographic differences.
+* General slope information.
+
+When a user clicks the map, show available elevation information.
+
+MOLA provides topographic data, not close-up photographs.
+
+Clearly label the units and elevation reference.
+
+5.3 CTX Surface Imagery
+
+Source: Mars Reconnaissance Orbiter — Context Camera.
+
+Use wider-area images to:
+
+* Understand the general landscape.
+* Identify large craters.
+* Identify ridges.
+* Plan a broad exploration route.
+* Select areas for closer examination.
+
+5.4 HiRISE High-Resolution Imagery
+
+Source: Mars Reconnaissance Orbiter — HiRISE.
+
+Show detailed imagery where available.
+
+Help identify:
+
+* Boulder fields.
+* Small craters.
+* Rocks.
+* Steep slopes.
+* Scarps.
+* Cracks.
+* Polygonal ground.
+* Surface depressions.
+* Possible collapsed terrain.
+
+When a user selects an area, display relevant available images or explain that no high-resolution image is available there.
+
+Do not create fake high-resolution imagery.
+
+5.5 Potential Subsurface Ice
+
+Sources:
+
+* SWIM project.
+* SHARAD.
+* Other relevant orbital observations.
+
+Show areas where scientific observations suggest possible underground water ice.
+
+Use a semi-transparent blue overlay.
+
+The overlay must be based on actual available data.
+
+When clicked, show:
+
+* Available evidence.
+* Dataset source.
+* Observation type.
+* Geographic coverage.
+* Scientific limitations.
+* Whether the evidence is indirect or direct.
+
+Important: Potential subsurface ice does not mean confirmed exposed or accessible clean ice.
+
+Do not show unsupported blue regions.
+
+5.6 Slope and Roughness
+
+Sources:
+
+* MOLA.
+* Available derived terrain products.
+* Relevant high-resolution imagery.
+
+Show:
+
+* Steep terrain.
+* Significant elevation changes.
+* Rough areas.
+* Terrain that requires closer inspection.
+
+Use a clear and readable legend.
+
+Do not invent roughness measurements.
+
+5.7 Scientific Investigation Targets
+
+Show geological targets using yellow markers or semi-transparent yellow zones.
+
+Include:
+
+* Rounded hills and smooth slope deposits.
+* Polygonal ground.
+* Impact craters.
+* Scalloped depressions.
+
+These must be based on verified examples within the selected study boundary.
+
+If exact examples have not been confirmed, label them as proposed investigation targets.
+
+Do not present hypothetical locations as confirmed landmarks.
+
+5.8 Optional Thermal Reference Information
+
+Do not create a temperature map or temperature heatmap.
+
+However, an optional information panel may explain how Mars Odyssey THEMIS observations help scientists compare the thermal properties of different surface materials.
+
+Do not colour the main map by temperature.
+
+Do not show a separate temperature overlay in the 2D Navigator.
+
+If the user opens the scientific information panel, explain the difference between surface temperature and thermal properties.
+
+⸻
+
+6. MAP LEGEND AND COLOUR CODING
+
+Create a clear legend with the following colours:
+
+Colour	Meaning
+Blue	Potential subsurface ice
+Green	Proposed astronaut route
+Yellow	Scientific investigation area
+Orange	Terrain requiring inspection
+Red	Potential hazard zone
+Purple	Astronaut habitat / base
+
+Use semi-transparent colours.
+
+Keep the real Martian surface visible.
+
+Every marker must have a clear label and explanation.
+
+Users must be able to enable and disable individual layers.
+
+⸻
+
+7. ASTRONAUT BASE AND ROUTE PLANNING
+
+The map must include an interactive astronaut expedition planner.
+
+7.1 Habitat / Base
+
+Add a purple marker representing the astronaut habitat.
+
+Display:
+
+* Habitat label.
+* Latitude.
+* Longitude.
+* Description.
+* Return-to-base option.
+
+If no actual habitat location has been selected, label it as a proposed project location.
+
+7.2 Astronaut starting location
+
+Add an astronaut marker.
+
+The user must be able to:
+
+* Click the map to select the starting location.
+* Change the starting location.
+* View its exact coordinates.
+
+The marker must move to the actual selected position.
+
+7.3 Destination
+
+The user must be able to click another point on the map to select a destination.
+
+Display:
+
+* Destination marker.
+* Coordinates.
+* Location information when available.
+
+7.4 Proposed route
+
+Draw a green route connecting the starting point and destination.
+
+Use available elevation and slope information to help identify difficult terrain.
+
+Prefer relatively smooth and gently sloping areas.
+
+Identify routes that approach:
+
+* Crater rims.
+* Steep slopes.
+* Boulder fields.
+* Rough terrain.
+* Potential hazard areas.
+
+Use a suitable pathfinding method when sufficient terrain data is available.
+
+If the route is approximate, label it clearly.
+
+Do not claim that the website calculates a certified safe route for real astronauts.
+
+7.5 Route information
+
+Display:
+
+* Starting coordinates.
+* Destination coordinates.
+* Total distance in kilometres.
+* Estimated walking duration.
+* Estimated rover driving duration.
+* Elevation changes where available.
+* Potential terrain difficulties.
+* Data limitations.
+
+Walking and rover times must be identified as estimates.
+
+Allow the user to:
+
+* Change the start point.
+* Change the destination.
+* Clear the route.
+* Calculate a new route.
+* Return to the habitat.
+* View route details.
+
+⸻
+
+8. TERRAIN HAZARDS AND ASTRONAUT SAFETY
+
+Create a dedicated hazard layer.
+
+The map must show potential obstacles and areas that require closer inspection.
+
+8.1 Boulder fields
+
+Areas covered with large rocks.
+
+Potential concern:
+May obstruct walking and rover movement.
+
+Map colour: Red.
+
+8.2 Craters
+
+Circular depressions, crater walls, and potentially steep rims.
+
+Potential concern:
+Some crater edges and slopes may require inspection.
+
+Map colour: Orange.
+
+8.3 Steep slopes
+
+Areas with significant elevation changes.
+
+Potential concern:
+May increase route difficulty.
+
+Representation:
+Slope overlay based on available elevation data.
+
+8.4 Polygonal terrain
+
+Networks of polygon-shaped cracks.
+
+Scientific relevance:
+May be connected to ice-related ground processes.
+
+Map colour: Yellow.
+
+Important: Polygonal terrain is not automatically dangerous. It requires investigation, not automatic classification as unstable.
+
+8.5 Scalloped depressions
+
+Irregular depressions with distinctive edges.
+
+Scientific relevance:
+Some are interpreted as possible results of underground ice loss.
+
+Map colour: Orange.
+
+8.6 Dust-covered ground
+
+Loose dusty surface material.
+
+Potential concern:
+May reduce visibility and make small obstacles harder to identify.
+
+Map colour: Yellow.
+
+When a user clicks a hazard, show:
+
+* Feature name.
+* Description.
+* Why it matters.
+* Supporting imagery.
+* Scientific source.
+* Whether the hazard is confirmed or requires further investigation.
+
+Do not label every geological feature as dangerous.
+
+⸻
+
+9. SCIENTIFIC INVESTIGATION STOPS
+
+Create four scientific investigation categories.
+
+They should be represented as selectable map points.
+
+Use actual verified examples within Arcadia Planitia whenever possible.
+
+Stop A — Rounded hills and smooth slope deposits
+
+Scientific question:
+
+Could these deposits contain preserved ice-rich material?
+
+Research value:
+
+Compare the shape and texture of these deposits with nearby terrain.
+
+Stop B — Polygonal ground
+
+Scientific question:
+
+What processes formed the polygon-shaped cracks?
+
+Research value:
+
+Compare their size, shape, and distribution.
+
+Stop C — Impact crater
+
+Scientific question:
+
+Does the crater expose material that was previously buried?
+
+Research value:
+
+Examine crater walls and ejecta for possible subsurface layers.
+
+Stop D — Scalloped depressions
+
+Scientific question:
+
+Has underground ice been lost from this area?
+
+Research value:
+
+Study their shape and relationship to surrounding slopes.
+
+When clicking a stop, show:
+
+* Name.
+* Coordinates.
+* Scientific question.
+* Research value.
+* Available images.
+* Source.
+* Limitations.
+
+If exact coordinates have not been verified, mark the stop as a proposed target.
+
+⸻
+
+10. NASA MISSIONS AND SCIENTIFIC INSTRUMENTS
+
+Create a section explaining which missions provide the data used in the expedition map.
+
+Use an attractive, organized layout.
+
+Include:
+
+Mission / Instrument	What it measures	Expedition value
+MRO — HiRISE	Detailed surface images	Identifies rocks, craters, slopes, cracks and obstacles
+MRO — CTX	Wider-area surface images	Helps plan the general route
+MRO — SHARAD	Radar reflections from underground layers	Investigates possible buried ice
+Mars Odyssey — THEMIS	Visible and infrared imagery and surface thermal properties	Helps compare surface materials
+Mars Global Surveyor — MOLA	Elevation and topography	Identifies elevation changes and steep terrain
+Curiosity — RAD	Surface radiation	Provides real radiation measurements from Gale Crater
+Perseverance — MEDA	Wind, temperature, pressure, dust and other environmental measurements	Provides weather observations from Jezero Crater
+
+Make clear that these instruments are not interchangeable.
+
+Important:
+
+* HiRISE provides detailed surface imagery.
+* SHARAD investigates underground structures.
+* MOLA provides topographic information.
+* MEDA measures weather at Jezero Crater.
+* RAD measurements come from Gale Crater.
+
+Do not present MEDA or RAD measurements as direct measurements from Arcadia Planitia.
+
+⸻
+
+11. NASA MISSIONS GALLERY
+
+Create a beautiful mission gallery.
+
+Do not display missions as a plain text list.
+
+Use professional image cards.
+
+Layout
+
+Desktop:
+
+* Two cards per row.
+* Consistent image sizes.
+* Balanced spacing.
+* Equal card dimensions.
+
+Mobile:
+
+* One card per row.
+
+Mission cards
+
+Include:
+
+* Real mission image.
+* Mission name.
+* Organization.
+* Mission type.
+* Launch year.
+* Current or historical status.
+* Short scientific description.
+* Main objective.
+* Official mission link.
+* Image source attribution.
+
+Include relevant missions such as:
+
+* Viking 1.
+* Viking 2.
+* Mars Pathfinder.
+* Spirit.
+* Opportunity.
+* Curiosity.
+* Perseverance.
+* Mars Reconnaissance Orbiter.
+* Mars Odyssey.
+* MAVEN.
+* InSight.
+
+Use real photographs from NASA, JPL, ESA, and official mission archives.
+
+Do not use random AI-generated images.
+
+Do not use letters or generic icons instead of mission photographs.
+
+Do not use the same image for every mission.
+
+Mission filters
+
+Create working filters:
+
+* All missions.
+* Orbiters.
+* Landers.
+* Rovers.
+* Atmospheric research.
+* Surface exploration.
+* Active missions.
+* Historical missions.
+
+The filters must actually change the displayed cards.
+
+Clicking a mission card should open a detailed information page or panel.
+
+Image attribution
+
+Every mission image must have a source link.
+
+The link must lead to the original image page or official image archive.
+
+Do not invent image credits.
+
+Include a small source attribution beneath each image or at the bottom of its card.
+
+⸻
+
+12. ABOUT MARS
+
+Create a detailed but well-organized About Mars section.
+
+Use the content from my original PDF document.
+
+Read the document and include all relevant information, not just a short summary.
+
+Preserve its important facts and original references.
+
+Organize the information into sections:
+
+12.1 General information
+
+* Mars is the fourth planet from the Sun.
+* It is a cold, dusty desert world.
+* Its atmosphere is thin.
+* It is approximately half the size of Earth.
+
+12.2 History of observation
+
+* Galileo Galilei observed Mars through a telescope in 1610.
+* Christiaan Huygens created a map of Mars in 1659.
+* Giovanni Cassini may have observed the southern polar ice cap in 1666.
+
+12.3 Surface and geology
+
+* Impact craters.
+* Volcanoes.
+* Deserts.
+* Valleys.
+* Polar ice caps.
+* Ancient geological formations.
+
+12.4 Rotation and orbit
+
+* A Martian day lasts approximately 24.6 hours.
+* A Martian solar day is called a sol.
+* A Martian year lasts approximately 687 Earth days.
+* Axial tilt is approximately 25 degrees.
+
+12.5 Seasons
+
+Explain the Martian seasons and how they differ from Earth’s.
+
+Use the correct durations and clearly identify whether values are measured in sols or Earth days.
+
+12.6 Moons
+
+Explain:
+
+* Phobos.
+* Deimos.
+* Their discovery in 1877 by Asaph Hall.
+* Their names from Greek mythology.
+* Their irregular shapes.
+
+12.7 Temperature and atmosphere
+
+Explain:
+
+* Typical global average temperature.
+* Large temperature variations.
+* Thin atmosphere.
+* Carbon dioxide composition.
+* Dust storms.
+
+Do not suggest that one average temperature represents every Martian location.
+
+12.8 Why Mars is red
+
+Explain how iron minerals oxidize and create the reddish surface appearance.
+
+12.9 Surface biomes and regions
+
+Use the images and labels from my PDF, including:
+
+* Ice Biome.
+* Canyons.
+* Volcanic Plains.
+
+Include appropriate real images and descriptions.
+
+12.10 Future exploration
+
+Explain why scientists study Mars and what future missions may investigate.
+
+Use natural, clear scientific English.
+
+Do not create repetitive AI-style paragraphs.
+
+⸻
+
+13. USE THE IMAGES FROM MY PDF
+
+I will attach my original PDF document.
+
+You must inspect the PDF and use its relevant images throughout the website.
+
+Do not ignore the document.
+
+Extract or use the actual relevant images.
+
+Place them in the correct sections:
+
+* About Mars.
+* Ice Biome.
+* Canyons.
+* Volcanic Plains.
+* Martian geography.
+* Scientific explanations.
+* Relevant exploration topics.
+
+Do not insert images randomly.
+
+Each image must be next to the information it illustrates.
+
+Preserve existing source information from the document.
+
+If the source of an image is missing, do not invent one.
+
+Use image attribution where appropriate.
+
+The PDF is part of the project’s scientific content and visual material.
+
+⸻
+
+14. ENVIRONMENTAL CONDITIONS AND ASTRONAUT SAFETY
+
+Create a separate information section explaining the environmental conditions that future astronauts must consider.
+
+This is reference information, not a live weather forecast for Arcadia Planitia.
+
+Include:
+
+Environmental factor	General Martian information	Why it matters
+Atmospheric pressure	Mean surface pressure is about 6.36 millibars	Humans require a pressurised suit and habitat
+Temperature	Global mean is about 214 K (−59°C), with local and seasonal variation	Cold affects equipment and batteries
+Atmosphere	Approximately 95% carbon dioxide	Cannot be breathed by humans
+Wind	Varies with local and atmospheric conditions	Can transport dust
+Dust	Can become widespread during storms	Can affect visibility and equipment
+Radiation	Galactic cosmic rays and solar energetic particles reach the surface	Requires monitoring and shielding
+
+MEDA
+
+Explain that Perseverance’s MEDA instrument measures:
+
+* Wind speed and direction.
+* Air temperature.
+* Ground temperature.
+* Atmospheric pressure.
+* Humidity.
+* Dust properties.
+* Radiation in several wavelength ranges.
+
+MEDA operates at Jezero Crater, not Arcadia Planitia.
+
+RAD
+
+Explain that Curiosity’s RAD instrument measures radiation at the Martian surface.
+
+Include the approximately 210 microgray per day measurement reported during the first ten months of Curiosity’s surface observations, if supported by the original source.
+
+Clearly identify it as a historical measurement from Gale Crater.
+
+Do not present it as a precise radiation prediction for Arcadia Planitia.
+
+Marswalk preparation checklist
+
+Include an interactive checklist for:
+
+* Wind conditions.
+* Air and ground temperature.
+* Dust and visibility.
+* Radiation information.
+* Spacesuit condition.
+* Rover condition.
+* Communication status.
+* Return route.
+* Habitat status.
+
+This is a planning aid, not a certification of astronaut safety.
+
+⸻
+
+15. INFORMATION PANELS AND TYPOGRAPHY
+
+The entire website must have a clean and readable layout.
+
+There must be no overlapping text.
+
+Fix:
+
+* Text overlapping text.
+* Text overlapping images.
+* Text overlapping buttons.
+* Broken card dimensions.
+* Cut-off titles.
+* Overflowing paragraphs.
+* Misaligned elements.
+* Panels covering important map content.
+* Incorrect spacing.
+* Broken mobile layouts.
+
+Use a consistent typography hierarchy.
+
+Page titles must be clearly different from section titles.
+
+Section titles must be clearly different from body text.
+
+Use readable paragraph widths and line heights.
+
+Long information panels should scroll internally when necessary.
+
+Do not make text excessively small just to fit more content.
+
+Do not allow the information panels to hide the main 3D planet or map.
+
+⸻
+
+16. SOURCES AND SCIENTIFIC REFERENCES
+
+Create a clear Sources section.
+
+Preserve the original references from my PDF.
+
+Keep reference numbering consistent with the existing document, especially references [4]–[30].
+
+Do not invent references.
+
+Use reliable sources such as:
+
+* NASA Mars Trek: https://trek.nasa.gov/mars/
+* NASA Mars Exploration: https://science.nasa.gov/mars/
+* NASA Planetary Data System: https://pds.nasa.gov/
+* USGS Astrogeology: https://www.usgs.gov/centers/astrogeology-science-center
+* NASA/JPL Mars Reconnaissance Orbiter.
+* NASA/JPL HiRISE archive.
+* NASA Mars Odyssey / THEMIS.
+* NASA SWIM project.
+* NASA MOLA datasets.
+
+Every important scientific claim must have a supporting source.
+
+Every image must have an appropriate image source link.
+
+Every map dataset must have its own attribution.
+
+Do not link every source to a general NASA homepage if a more specific dataset page is available.
+
+⸻
+
+17. TECHNICAL IMPLEMENTATION AND WEBFLOW REQUIREMENTS
+
+Use Webflow for the website structure, design system, CMS content, navigation, and responsive layout.
+
+For advanced features, use custom code and appropriate external libraries.
+
+Possible implementation technologies:
+
+* Three.js or React Three Fiber for the 3D globe.
+* WebGL for planetary rendering.
+* Leaflet, MapLibre, or another suitable map framework for the 2D planetary map.
+* GeoJSON for geographical features and markers.
+* MOLA elevation data for topography.
+* NASA/JPL imagery and scientific datasets.
+* Webflow CMS for mission cards and location information.
+* JavaScript for filters and interactive controls.
+
+Do not assume that ordinary Webflow elements alone can implement a fully functional scientific planetary map.
+
+If a feature requires an external map viewer or custom application embedded in Webflow, integrate it properly.
+
+Keep the interface visually consistent even if the 3D and 2D components use custom code.
+
+Do not expose private API keys in frontend code.
+
+Use secure server-side integrations where necessary.
+
+If an external data source is unavailable, do not invent data to make the interface look functional.
+
+⸻
+
+18. FINAL QUALITY CONTROL
+
+Before considering the website finished, test every important feature.
+
+3D globe
+
+* Does the actual Mars sphere rotate?
+* Does the surface texture rotate with it?
+* Do meridians and latitude lines remain attached?
+* Do location markers remain at their exact coordinates?
+* Does zoom work?
+* Does clicking a marker focus the correct location?
+* Does the information panel display the correct content?
+
+2D expedition map
+
+* Does the map show real Martian surface imagery?
+* Is Arcadia Planitia the main study area?
+* Can the user zoom and move around?
+* Do the scientific layers load?
+* Can layers be enabled and disabled?
+* Does the blue potential-ice layer show actual available data?
+* Does the elevation layer use MOLA data?
+* Does CTX imagery display correctly?
+* Does HiRISE imagery display where available?
+* Do hazard markers have explanations?
+* Do scientific investigation points have information panels?
+* Does the habitat marker work?
+* Can the astronaut’s starting point be changed?
+* Can a destination be selected?
+* Does the route connect the selected points?
+* Are coordinates and distance displayed correctly?
+
+There must be no temperature heatmap or temperature-coloured 2D map.
+
+Missions
+
+* Are mission cards displayed two per row on desktop?
+* Do the filters work?
+* Does each mission have a real image?
+* Does each image have a source link?
+* Does clicking a mission open its details?
+
+About Mars
+
+* Is the PDF information included?
+* Are relevant PDF images used?
+* Are original references preserved?
+* Are the facts scientifically accurate?
+
+General website
+
+* Is there any overlapping text?
+* Are all images loading?
+* Are buttons functional?
+* Is the website responsive?
+* Are there console errors?
+* Are there broken integrations?
+* Are sources displayed correctly?
+
+Fix all issues discovered during testing.
+
+⸻
+
+FINAL EXPECTATION
+
+I want the finished website to feel like a real scientific Mars exploration platform.
+
+The 3D globe must be a realistic, geographically accurate representation of Mars, and the entire planet must rotate naturally.
+
+The 2D map must be a realistic surface map of Arcadia Planitia with NASA imagery, topography, potential underground ice, scientific investigation points, hazard zones, an astronaut habitat, and a working proposed route.
+
+The missions page must contain real mission photographs, attractive cards, and working filters.
+
+The About Mars section must include the information and relevant images from my PDF.
+
+All text must be readable, all elements properly aligned, and all interactive features must work.
+
+Do not simplify the project.
+
+Do not replace real scientific data with fictional content.
+
+Do not create decorative buttons that do nothing.
+
+Do not claim that a feature works if it has not been implemented and tested.
+
+Please implement the entire brief in the existing Webflow project and then provide a short report describing the completed features, connected scientific datasets, image sources, and any remaining data limitations.
+
+For references add this
+
+1.Cermak, A. (2026, July 10). Mars: Facts - NASA Science. NASA Science. https://science.nasa.gov/mars/facts/#h-surface
+
+2.Знание.Вики. (2025, January 31). Марс: характеристики, атмосфера, исследования планеты. Знание.Вики. https://znanierussia.ru/articles/%D0%9C%D0%B0%D1%80%D1%81
+
+3.Azua-Bustos, A., González-Silva, C., & Fairén, A. G. (2022). The Atacama Desert in northern Chile as an analog model of Mars. Frontiers in Astronomy and Space Sciences, 8. https://doi.org/10.3389/fspas.2021.810426
+
+4.Checking your browser - reCAPTCHA. (n.d.). https://pmc.ncbi.nlm.nih.gov/articles/PMC7645800/?utm_source
+
+5.Tavares, F. (2023, December 28). Is Mars’ soil too dry to sustain life? - NASA. NASA. https://www.nasa.gov/centers-and-facilities/ames/is-mars-soil-too-dry-to-sustain-life/?utm_source
+
+6.Arens, F. L., Uhl, J., Schmitt-Kopplin, P., Karger, C., Mangelsdorf, K., Sager, C., Airo, A., Valenzuela, B., Zamorano, P., & Schulze-Makuch, D. (2025). Exploring organic compound preservation through long-term in situ experiments in the Atacama desert and the relevance for Mars. Scientific Reports, 15(1), 29957. https://doi.org/10.1038/s41598-025-16197-w
+
+7.Mars Institute | HMP. (n.d.). Mars Institute. https://www.marsinstitute.no/hmp?utm_source
+
+8.Mars Institute | HMP FAQs. (n.d.). Mars Institute. https://www.marsinstitute.no/hmp-faqs?utm_source
+
+9.Lee, P., Fong, T., Glass, B., Hoffman, S. J., Hoftun, C., Lorber, K., McKay, C. P., Mueller, R., Parnell, J., Schutt, J. W., & Zacny, K. (2013). Haughton impact crater and surrounding terrain, Devon Island, High Arctic: A multi-mission Mars analog science site. Analog Sites for Mars Missions II. https://www.hou.usra.edu/meetings/analogs2013/pdf/4029.pdf
+
+10.PSTAR Field work in Iceland - NASA. (n.d.). NASA. https://www.nasa.gov/pstar-field-work-in-iceland/?utm_source
+
+11.Cousins, C. R. (2015). Volcanogenic fluvial-lacustrine environments in Iceland and their utility for identifying past habitability on Mars. Life, 5(1), 568–586. https://doi.org/10.3390/life5010568
+
+12.NASA. Mars Global Surveyor: Science Instruments. NASA Science. https://science.nasa.gov/mission/mars-global-surveyor/science-instruments/
+
+13.NASA. Mars Odyssey Science Instruments. NASA Science. https://science.nasa.gov/mission/odyssey/science-instruments/
+
+14.NASA. Mars Odyssey Science Highlights. NASA Science. https://science.nasa.gov/mission/odyssey/science-highlights/
+
+15.NASA. MRO Science Instruments. NASA Science. https://science.nasa.gov/mission/mars-reconnaissance-orbiter/science-instruments/
+
+16.NASA. Mars Topography. NASA Photojournal. https://science.nasa.gov/photojournal/mars-topography/
+
+17.Tanaka, K. L., Skinner, J. A., Dohm, J. M., et al. (2014). Geologic Map of Mars. U.S. Geological Survey, Scientific Investigations Map 3292. https://doi.org/10.3133/sim3292
+
+18.U.S. Geological Survey. (2014). Geologic Map of Mars. https://www.usgs.gov/maps/geologic-map-mars
+
+19.Subsurface Water Ice Mapping (SWIM). (n.d.). Subsurface water ice mapping on Mars. Planetary Science Institute. https://swim.psi.edu/⁠
+
+20. NASA. (2023, October 26). SWIM map shows subsurface water ice on Mars. https://science.nasa.gov/resource/swim-map-shows-subsurface-water-ice-on-mars/⁠
+
+21. NASA. (2002, December 19). Arcadia Planitia. NASA Science. https://science.nasa.gov/resource/arcadia-planitia/⁠
+
+22. NASA. (n.d.). Mars Reconnaissance Orbiter: Science instruments. https://science.nasa.gov/mission/mars-reconnaissance-orbiter/science-instruments/⁠
+
+23. NASA. (n.d.). SHARAD: Shallow radar. Mars Reconnaissance Orbiter. https://science.nasa.gov/mission/mars-reconnaissance-orbiter/science-instruments/⁠
+
+24. Arizona State University. (n.d.). THEMIS image explorer. https://viewer.mars.asu.edu/viewer/themis⁠
+
+25. NASA. (n.d.). Mars Trek. https://trek.nasa.gov/mars/⁠
+
+26. Williams, D. R. (2025). Mars fact sheet. NASA Space Science Data Coordinated Archive. https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html⁠
+
+27. NASA. (n.d.). Perseverance science instruments. https://science.nasa.gov/mission/mars-2020-perseverance/science-instruments/⁠
+
+28. NASA. (2013, December 9). Radiation measurements on Mars. NASA Science. https://science.nasa.gov/resource/radiation-measurements-on-mars/⁠
+
+29. NASA. (2023, October 26). Ice-exposing impact crater surrounded by polygon terrain. NASA Science. https://science.nasa.gov/resource/ice-exposing-impact-crater-surrounded-by-polygon-terrain/⁠
+
+30. NASA Jet Propulsion Laboratory. (2013, July 24). Utopia Planitia’s surface. https://www.jpl.nasa.gov/images/pia17633-utopia-planitias-surface/⁠
+
+31. NASA. (n.d.). About Mars Trek. https://trek.nasa.gov/mars/jpl/config/textAbout.html⁠
