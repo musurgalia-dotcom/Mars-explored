@@ -48,7 +48,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['MEDA', 'Mastcam-Z', 'SHERLOC', 'PIXL', 'RIMFAX', 'SuperCam', 'MOXIE'],
     scientificContributions:
       'Confirmed lake-delta sedimentary sequences in Jezero Crater, produced oxygen from Martian CO₂, and provides continuous Jezero boundary-layer meteorology via MEDA.',
-    imageUrl: '/assets/nasa/perseverance.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/perseverance.jpg',
     imageCaption: 'Perseverance rover self-portrait with the Ingenuity helicopter in Jezero Crater.',
     imageCredit: 'NASA/JPL-Caltech/MSSS (PIA24542)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA24542',
@@ -71,7 +71,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['RAD', 'SAM', 'CheMin', 'ChemCam', 'REMS', 'MAHLI', 'Mastcam'],
     scientificContributions:
       'Demonstrated long-lived ancient freshwater lakes, detected organic carbon in mudstones, and captured Gale Crater RAD dosimetry (~210 µGy/day in the first ~10 months).',
-    imageUrl: '/assets/nasa/curiosity.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/curiosity.jpg',
     imageCaption: 'Curiosity rover self-portrait at the Glen Etive clay-bearing unit on Mount Sharp.',
     imageCredit: 'NASA/JPL-Caltech/MSSS (PIA23378)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA23378',
@@ -94,7 +94,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['HiRISE', 'CTX', 'SHARAD', 'CRISM', 'MCS', 'MARCI'],
     scientificContributions:
       'Returned hundreds of thousands of CTX and HiRISE images and enabled SHARAD mapping of subsurface ice sheets in Arcadia Planitia and Utopia Planitia.',
-    imageUrl: '/assets/nasa/mro.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/mro.jpg',
     imageCaption: 'Mars Reconnaissance Orbiter spacecraft configuration with high-gain antenna and solar arrays.',
     imageCredit: 'NASA/JPL-Caltech (PIA07214)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA07214',
@@ -117,7 +117,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['THEMIS', 'GRS', 'MARIE'],
     scientificContributions:
       'GRS detected widespread near-surface hydrogen in high latitudes, and THEMIS global daytime/nighttime thermal inertia maps distinguish rocky terrain from loose dust.',
-    imageUrl: '/assets/nasa/odyssey.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/odyssey.jpg',
     imageCaption: 'Artist concept of the 2001 Mars Odyssey orbiter mapping Mars.',
     imageCredit: 'NASA/JPL (PIA04244)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA04244',
@@ -140,7 +140,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['NGIMS', 'IUVS', 'SWIA', 'STATIC', 'MAG', 'LPW'],
     scientificContributions:
       'Quantified present-day atmospheric escape rates during solar storms and showed how Mars lost most of its early thick atmosphere.',
-    imageUrl: '/assets/nasa/maven.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/maven.jpg',
     imageCaption: 'Artist concept of the MAVEN spacecraft sampling Mars’s upper atmosphere and ionosphere.',
     imageCredit: 'NASA/GSFC (PIA17487)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA17487',
@@ -163,7 +163,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['SEIS', 'HP³', 'RISE', 'TWINS'],
     scientificContributions:
       'Recorded over 1,300 marsquakes, constrained Martian crustal thickness (24–72 km) and core radius (~1,830 km), and tracked dust-driven power loss.',
-    imageUrl: '/assets/nasa/insight.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/insight.jpg',
     imageCaption: 'InSight’s SEIS seismometer resting on the Elysium Planitia regolith.',
     imageCredit: 'NASA/JPL-Caltech (PIA22956)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA22956',
@@ -186,7 +186,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['Pancam', 'Mini-TES', 'Mössbauer', 'APXS', 'MI', 'RAT'],
     scientificContributions:
       'Discovered hematite spherules and sulfate-rich sedimentary rocks deposited in ancient wet environments before succumbing to the 2018 global dust storm.',
-    imageUrl: '/assets/nasa/opportunity.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/opportunity.jpg',
     imageCaption: 'Stereo panorama of Martian terrain surveyed by Opportunity on Sol 3105.',
     imageCredit: 'NASA/JPL-Caltech/Cornell/ASU (PIA16559)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA16559',
@@ -209,7 +209,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['Pancam', 'Mini-TES', 'Mössbauer', 'APXS', 'MI', 'RAT'],
     scientificContributions:
       'Uncovered silica-rich deposits at Home Plate indicative of ancient hot springs or volcanic steam vents.',
-    imageUrl: '/assets/nasa/spirit.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/spirit.jpg',
     imageCaption: 'Spirit rover hardware and surface view in Gusev Crater.',
     imageCredit: 'NASA/JPL-Caltech/Cornell (PIA05040)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA05040',
@@ -232,7 +232,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['IMP Camera', 'ASI/MET', 'APXS (Sojourner)'],
     scientificContributions:
       'Proved mobile surface robotics on Mars and analyzed rounded pebbles and conglomerate boulders left by catastrophic ancient floods.',
-    imageUrl: '/assets/nasa/pathfinder.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/pathfinder.jpg',
     imageCaption: 'Sojourner rover inspecting a Martian boulder near the Pathfinder lander in Ares Vallis.',
     imageCredit: 'NASA/JPL (PIA01122)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA01122',
@@ -255,7 +255,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['Lander Imaging System', 'GC-MS', 'Biology Package', 'Meteorology Boom', 'VIS Orbiter Cameras'],
     scientificContributions:
       'Provided the MDIM global visual basemap mosaic and six years of surface meteorology and regolith chemistry in Chryse Planitia.',
-    imageUrl: '/assets/nasa/viking1.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/viking1.jpg',
     imageCaption: 'Viking Lander 1 surface view in Chryse Planitia.',
     imageCredit: 'NASA/JPL (PIA00565)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA00565',
@@ -278,7 +278,7 @@ export const NASA_MISSIONS: MarsMission[] = [
     keyInstruments: ['Lander Imaging System', 'GC-MS', 'Biology Package', 'Seismometer', 'Meteorology Boom'],
     scientificContributions:
       'Documented thin seasonal water-ice frost in Utopia Planitia and provided northern mid-latitude atmospheric pressure cycles.',
-    imageUrl: '/assets/nasa/viking2.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/viking2.jpg',
     imageCaption: 'Viking Lander 2 panoramic surface view across rocky Utopia Planitia.',
     imageCredit: 'NASA/JPL (PIA04023)',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA04023',

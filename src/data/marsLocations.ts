@@ -49,7 +49,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Preserves a multi-billion-year volcanic record of Martian mantle evolution, lithospheric thickness, and crustal loading.',
     futureExploration:
       'High-altitude thin air (~0.7 mbar at summit) makes Olympus Mons unsuitable for landing, but orbital spectroscopy and flank lava tubes are of major interest for astrobiology and cave-shelter research.',
-    imageUrl: '/assets/pdf/pdf_img_3.jpg',
+    imageUrl: '/Mars-explored/assets/pdf/pdf_img_3.jpg',
     imageCaption: 'Olympus Mons and surrounding Tharsis volcanic plains observed from orbit (PDF Page 4 / Viking Orbiter).',
     imageSourceLabel: 'NASA/JPL Viking Orbiter & PIA03821',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA03821',
@@ -83,7 +83,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Exposes kilometers of stratified Martian crust in vertical cross-section, offering a direct window into Mars’s early hydrological and volcanic history.',
     futureExploration:
       'Deep canyon floors have higher atmospheric pressure (~10–12 mbar) than the Martian mean, though steep cliffs and landslide hazards challenge landing precision.',
-    imageUrl: '/assets/pdf/pdf_img_2.jpg',
+    imageUrl: '/Mars-explored/assets/pdf/pdf_img_2.jpg',
     imageCaption: 'Steep layered canyon walls and wind-sculpted floor deposits in Valles Marineris (PDF Page 3 / Mars Express).',
     imageSourceLabel: 'NASA/JPL PIA13077 — Floor of Ius Chasma',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA13077',
@@ -117,7 +117,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Acts as Mars’s primary climate archive, preserving atmospheric dust and orbital tilt cycles in frozen strata.',
     futureExploration:
       'Severe polar winter darkness and extreme seasonal cold (~-143°C) limit human operations compared with mid-latitude plains, though polar ice cores remain a high-value robotic science goal.',
-    imageUrl: '/assets/nasa/polar_caps.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/polar_caps.jpg',
     imageCaption: 'Planum Boreum layered north polar ice deposits imaged from orbit.',
     imageSourceLabel: 'NASA/JPL PIA10651',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA10651',
@@ -151,7 +151,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Controls Mars’s global seasonal atmospheric pressure cycle as up to 25–30% of the CO₂ atmosphere freezes onto the winter poles.',
     futureExploration:
       'High elevation and extreme cold favor automated climate landers rather than crewed bases.',
-    imageUrl: '/assets/pdf/pdf_img_1.jpg',
+    imageUrl: '/Mars-explored/assets/pdf/pdf_img_1.jpg',
     imageCaption: 'Exposed Martian water-ice stratigraphy illustrating layered polar/mid-latitude ice beds (PDF Page 2).',
     imageSourceLabel: 'NASA/JPL PIA22077 / PDF Page 2',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA22077',
@@ -184,7 +184,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Demonstrates how extreme elevation changes alter atmospheric pressure, dust lifting, and ice stability on Mars.',
     futureExploration:
       'Higher air density improves parachute braking during entry, descent, and landing, though frequent dust activity poses solar power challenges.',
-    imageUrl: '/assets/nasa/valles_marineris.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/valles_marineris.jpg',
     imageCaption: 'Martian topographic canyon and highland basin geology from NASA planetary archives.',
     imageSourceLabel: 'NASA Photojournal — Mars Topography',
     imageSourceUrl: 'https://science.nasa.gov/photojournal/mars-topography/',
@@ -218,7 +218,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Clarifies how long-lived volcanic plumes warped Mars’s lithosphere and released volatile gases into the early atmosphere.',
     futureExploration:
       'Valuable orbital target for studying volcanic gas history and orographic cloud microphysics.',
-    imageUrl: '/assets/nasa/olympus_mons.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/olympus_mons.jpg',
     imageCaption: 'Tharsis shield volcano scarp and lava flows imaged by NASA orbiters.',
     imageSourceLabel: 'NASA/JPL PIA03821',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA03821',
@@ -251,7 +251,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Central testbed for understanding mid-latitude climate-driven ground ice, thermokarst scalloped depressions, and potential in-situ resource utilization (ISRU).',
     futureExploration:
       'Prime candidate for human and precursor drilling missions, though exact ice depth, purity, boulder hazards, and dust mobility require surface verification.',
-    imageUrl: '/assets/nasa/arcadia_planitia.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/arcadia_planitia.jpg',
     imageCaption: 'Arcadia Planitia craters and mantled northern plains observed by Mars Reconnaissance Orbiter.',
     imageSourceLabel: 'NASA/JPL PIA26321 & Arcadia Planitia Resource',
     imageSourceUrl: 'https://science.nasa.gov/resource/arcadia-planitia/',
@@ -288,7 +288,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Provides direct ground truth of ancient Martian lake chemistry, fluvial sedimentation, and modern local boundary-layer weather via MEDA.',
     futureExploration:
       'Demonstrates autonomous hazard avoidance, MOXIE oxygen production from Martian CO₂, and rotorcraft scouting.',
-    imageUrl: '/assets/nasa/jezero_crater.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/jezero_crater.jpg',
     imageCaption: 'Jezero Crater western fan delta examined by NASA’s Perseverance rover.',
     imageSourceLabel: 'NASA/JPL PIA25022',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA25022',
@@ -323,7 +323,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Established both past habitability on Mars and the first direct surface radiation dosimetry needed to plan astronaut shielding.',
     futureExploration:
       'RAD measurements from Gale Crater serve as a critical historical baseline for human mission radiation risk modeling (though local shielding and solar cycles vary).',
-    imageUrl: '/assets/nasa/gale_crater.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/gale_crater.jpg',
     imageCaption: 'Mount Sharp (Aeolis Mons) rising from the floor of Gale Crater.',
     imageSourceLabel: 'NASA/JPL PIA15292',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA15292',
@@ -358,7 +358,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Key comparative analog to Arcadia Planitia for studying northern mid-latitude ground ice and thermal contraction polygons.',
     futureExploration:
       'Strong secondary candidate for mid-latitude water-ice extraction alongside Arcadia Planitia.',
-    imageUrl: '/assets/nasa/utopia_planitia.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/utopia_planitia.jpg',
     imageCaption: 'Scalloped and polygonal terrain across Utopia Planitia imaged by MRO HiRISE.',
     imageSourceLabel: 'NASA/JPL PIA17633',
     imageSourceUrl: 'https://www.jpl.nasa.gov/images/pia17633-utopia-planitias-surface/',
@@ -393,7 +393,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Established the baseline chemical, meteorological, and geological characterization of Martian regolith.',
     futureExploration:
       'Demonstrates long-duration surface operations and flood-deposited boulder field trafficability challenges.',
-    imageUrl: '/assets/nasa/viking1.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/viking1.jpg',
     imageCaption: 'Martian surface and boulder-strewn plains at Chryse Planitia imaged by Viking Lander 1.',
     imageSourceLabel: 'NASA/JPL PIA00565',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA00565',
@@ -428,7 +428,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Provided the first direct seismic measurements of Mars’s core, mantle, and crustal layering.',
     futureExploration:
       'Demonstrated both seismic hazard awareness and the impact of fine atmospheric dust settling on solar power systems.',
-    imageUrl: '/assets/nasa/insight.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/insight.jpg',
     imageCaption: 'InSight’s SEIS seismometer deployed on the regolith of Elysium Planitia.',
     imageSourceLabel: 'NASA/JPL PIA22956',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA22956',
@@ -462,7 +462,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Demonstrated ancient hydrothermal environments capable of supporting microbial energy gradients.',
     futureExploration:
       'Valuable engineering benchmark for wheeled rover mobility across loose sulfate sand traps.',
-    imageUrl: '/assets/nasa/spirit.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/spirit.jpg',
     imageCaption: 'Mars Exploration Rover Spirit surveying Gusev Crater terrain.',
     imageSourceLabel: 'NASA/JPL PIA05040',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA05040',
@@ -496,7 +496,7 @@ export const MARS_LOCATIONS: MarsLocation[] = [
       'Provided mineralogical proof of ancient groundwater activity in equatorial Mars.',
     futureExploration:
       'Highlights the operational impact of planet-encircling dust storms on solar-powered surface assets.',
-    imageUrl: '/assets/nasa/opportunity.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/opportunity.jpg',
     imageCaption: 'Opportunity rover vista across Meridiani Planum crater deposits.',
     imageSourceLabel: 'NASA/JPL PIA16559',
     imageSourceUrl: 'https://images.nasa.gov/details/PIA16559',

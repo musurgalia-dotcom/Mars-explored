@@ -177,7 +177,7 @@ export const HIRISE_FOOTPRINTS: HiRISEFootprint[] = [
     resolution: '~0.3 m/pixel (MRO HiRISE)',
     summary:
       'High-resolution HiRISE strip resolving bright subsurface water ice excavated by a small fresh impact crater surrounded by patterned polygonal ground.',
-    imageUrl: '/assets/nasa/polygon_crater.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/polygon_crater.jpg',
     sourceUrl: 'https://science.nasa.gov/resource/ice-exposing-impact-crater-surrounded-by-polygon-terrain/'
   },
   {
@@ -192,7 +192,7 @@ export const HIRISE_FOOTPRINTS: HiRISEFootprint[] = [
     resolution: '~0.28 m/pixel (MRO HiRISE)',
     summary:
       'Illustrates steep eroded scarps exposing stratified water-ice beds beneath shallow dusty regolith—demonstrating how HiRISE detects cliffs and ice stratigraphy.',
-    imageUrl: '/assets/pdf/pdf_img_1.jpg',
+    imageUrl: '/Mars-explored/assets/pdf/pdf_img_1.jpg',
     sourceUrl: 'https://images.nasa.gov/details/PIA22077'
   },
   {
@@ -207,7 +207,7 @@ export const HIRISE_FOOTPRINTS: HiRISEFootprint[] = [
     resolution: '~0.3 m/pixel (MRO HiRISE)',
     summary:
       'Resolves meter-scale boulders clustered along crater ejecta blankets and eroded ridge boundaries—critical for rover trafficability assessment.',
-    imageUrl: '/assets/nasa/boulders_mars.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/boulders_mars.jpg',
     sourceUrl: 'https://images.nasa.gov/details/PIA25183'
   }
 ];
@@ -289,7 +289,7 @@ export const TERRAIN_HAZARDS: TerrainHazard[] = [
       'Dense concentration of meter-scale rocky ejecta blocks surrounding an eroded crater floor and ridge.',
     whyItMatters:
       'Large rocks can obstruct walking paths and exceed rover ground clearance or wheel structural tolerances.',
-    imageUrl: '/assets/nasa/boulders_mars.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/boulders_mars.jpg',
     sourceLabel: 'NASA/JPL HiRISE — PIA25183',
     sourceUrl: 'https://images.nasa.gov/details/PIA25183'
   },
@@ -307,7 +307,7 @@ export const TERRAIN_HAZARDS: TerrainHazard[] = [
       'Exposed fractured basalt blocks and rocky debris apron mapped at ~0.3 m/px HiRISE scale.',
     whyItMatters:
       'Poses puncture and entrapment hazards for pressurized rovers; routes should detour around dense boulder zones.',
-    imageUrl: '/assets/nasa/boulders_mars.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/boulders_mars.jpg',
     sourceLabel: 'NASA/JPL HiRISE — PIA25183',
     sourceUrl: 'https://images.nasa.gov/details/PIA25183'
   },
@@ -325,7 +325,7 @@ export const TERRAIN_HAZARDS: TerrainHazard[] = [
       'Circular impact depression with elevated rim and steeper inner crater slopes.',
     whyItMatters:
       'Crater walls and rim slopes require inspection before approaching for geological sampling.',
-    imageUrl: '/assets/nasa/arcadia_planitia.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/arcadia_planitia.jpg',
     sourceLabel: 'NASA/JPL — Arcadia Planitia PIA26321',
     sourceUrl: 'https://images.nasa.gov/details/PIA26321'
   },
@@ -343,7 +343,7 @@ export const TERRAIN_HAZARDS: TerrainHazard[] = [
       'Bowl-shaped impact crater interrupting smooth northern plains with raised ejecta rim.',
     whyItMatters:
       'Steeper inner walls (>15° locally) require traverse planning to skirt the outer ejecta margin.',
-    imageUrl: '/assets/nasa/arcadia_planitia.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/arcadia_planitia.jpg',
     sourceLabel: 'NASA/JPL — Arcadia Planitia',
     sourceUrl: 'https://science.nasa.gov/resource/arcadia-planitia/'
   },
@@ -361,7 +361,7 @@ export const TERRAIN_HAZARDS: TerrainHazard[] = [
       'Irregular rimless depressions with asymmetric steep scarps and gentle slopes, interpreted as possible results of underground ice sublimation.',
     whyItMatters:
       'Asymmetric scarps and potentially voided/sublimated margins warrant careful slope inspection rather than blind crossing.',
-    imageUrl: '/assets/nasa/utopia_planitia.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/utopia_planitia.jpg',
     sourceLabel: 'NASA/JPL — Mid-Latitude Scalloped Terrain (PIA17633)',
     sourceUrl: 'https://www.jpl.nasa.gov/images/pia17633-utopia-planitias-surface/'
   },
@@ -379,7 +379,7 @@ export const TERRAIN_HAZARDS: TerrainHazard[] = [
       'Networks of polygon-shaped thermal contraction cracks—scientifically associated with ice-related ground processes.',
     whyItMatters:
       'Important: Polygonal terrain is NOT automatically dangerous or unstable. It requires scientific investigation and local wheel-trough clearance checks.',
-    imageUrl: '/assets/nasa/polygon_crater.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/polygon_crater.jpg',
     sourceLabel: 'NASA Science — Ice-Exposing Crater & Polygon Terrain (Ref [29])',
     sourceUrl: 'https://science.nasa.gov/resource/ice-exposing-impact-crater-surrounded-by-polygon-terrain/'
   },
@@ -397,7 +397,7 @@ export const TERRAIN_HAZARDS: TerrainHazard[] = [
       'Low-thermal-inertia loose dusty regolith mantling older basaltic plains.',
     whyItMatters:
       'Loose dust can mask small buried rocks, reduce EVA visibility when disturbed, and increase wheel sinkage.',
-    imageUrl: '/assets/nasa/arcadia_planitia.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/arcadia_planitia.jpg',
     sourceLabel: 'Mars Odyssey THEMIS / NASA Mars Trek (Refs [24], [25])',
     sourceUrl: 'https://viewer.mars.asu.edu/viewer/themis'
   }
@@ -429,7 +429,7 @@ export const INVESTIGATION_STOPS: InvestigationStop[] = [
     scientificQuestion: 'Could these deposits contain preserved ice-rich material?',
     researchValue:
       'Compare the shape, surface texture, and slope orientation of smooth apron deposits against adjacent rocky terrain.',
-    imageUrl: '/assets/pdf/pdf_img_1.jpg',
+    imageUrl: '/Mars-explored/assets/pdf/pdf_img_1.jpg',
     sourceLabel: 'NASA MRO HiRISE / Arcadia Study (Refs [21], [22])',
     sourceUrl: 'https://science.nasa.gov/resource/arcadia-planitia/',
     limitations:
@@ -445,7 +445,7 @@ export const INVESTIGATION_STOPS: InvestigationStop[] = [
     scientificQuestion: 'What processes formed the polygon-shaped cracks?',
     researchValue:
       'Compare polygon diameter, crack geometry, and spatial distribution to distinguish thermal contraction in ice-cemented ground from desiccation or lava cooling.',
-    imageUrl: '/assets/nasa/polygon_crater.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/polygon_crater.jpg',
     sourceLabel: 'NASA Science — Polygon Terrain & Ice Crater (Ref [29])',
     sourceUrl: 'https://science.nasa.gov/resource/ice-exposing-impact-crater-surrounded-by-polygon-terrain/',
     limitations:
@@ -461,7 +461,7 @@ export const INVESTIGATION_STOPS: InvestigationStop[] = [
     scientificQuestion: 'Does the crater expose material that was previously buried?',
     researchValue:
       'Examine crater walls, bright albedo exposures, and ejecta blankets for subsurface stratigraphic layers without deep drilling.',
-    imageUrl: '/assets/nasa/arcadia_planitia.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/arcadia_planitia.jpg',
     sourceLabel: 'NASA/JPL PIA26321 & Ref [29]',
     sourceUrl: 'https://images.nasa.gov/details/PIA26321',
     limitations:
@@ -477,7 +477,7 @@ export const INVESTIGATION_STOPS: InvestigationStop[] = [
     scientificQuestion: 'Has underground ice been lost from this area?',
     researchValue:
       'Study asymmetric scarp orientation, floor terraces, and relationship to regional slopes to reconstruct past sublimation retreat.',
-    imageUrl: '/assets/nasa/utopia_planitia.jpg',
+    imageUrl: '/Mars-explored/assets/nasa/utopia_planitia.jpg',
     sourceLabel: 'NASA/JPL PIA17633 (Ref [30])',
     sourceUrl: 'https://www.jpl.nasa.gov/images/pia17633-utopia-planitias-surface/',
     limitations:

@@ -12,28 +12,28 @@ const FEATURED_LOCATIONS = [
     name: 'Olympus Mons',
     metric: '+21.9 km MOLA Datum',
     summary: 'Largest shield volcano in the solar system, spanning ~600 km across the Tharsis volcanic rise.',
-    image: '/assets/pdf/pdf_img_3.jpg'
+    image: '/Mars-explored/assets/pdf/pdf_img_3.jpg'
   },
   {
     id: 'valles-marineris',
     name: 'Valles Marineris',
     metric: '4,000 km Rift System',
     summary: 'Equatorial tectonic canyon system dropping 7 km deep into layered Martian crust.',
-    image: '/assets/pdf/pdf_img_2.jpg'
+    image: '/Mars-explored/assets/pdf/pdf_img_2.jpg'
   },
   {
     id: 'jezero-crater',
     name: 'Jezero Crater',
     metric: 'Perseverance & MEDA Site',
     summary: 'Ancient lakebed and river delta preserving clays, carbonates, and modern weather measurements.',
-    image: '/assets/nasa/jezero_crater.jpg'
+    image: '/Mars-explored/assets/nasa/jezero_crater.jpg'
   },
   {
     id: 'gale-crater',
     name: 'Gale Crater',
     metric: 'Curiosity & RAD Site',
     summary: '154 km impact basin with Mount Sharp and surface radiation measurements from RAD.',
-    image: '/assets/nasa/gale_crater.jpg'
+    image: '/Mars-explored/assets/nasa/gale_crater.jpg'
   }
 ];
 
@@ -125,7 +125,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
           <article className="flex flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0D111A]">
             <div className="aspect-[16/10] overflow-hidden bg-[#121723]">
               <img
-                src="/assets/nasa/olympus_mons.jpg"
+                src="/Mars-explored/assets/nasa/olympus_mons.jpg"
                 alt="Olympus Mons scarp on Mars"
                 className="h-full w-full object-cover"
                 referrerPolicy="no-referrer"
@@ -155,7 +155,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
           <article className="flex flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0D111A]">
             <div className="aspect-[16/10] overflow-hidden bg-[#121723]">
               <img
-                src="/assets/nasa/arcadia_planitia.jpg"
+                src="/Mars-explored/assets/nasa/arcadia_planitia.jpg"
                 alt="Arcadia Planitia surface craters and plains"
                 className="h-full w-full object-cover"
                 referrerPolicy="no-referrer"
@@ -187,7 +187,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
           <article className="flex flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0D111A]">
             <div className="aspect-[16/10] overflow-hidden bg-[#121723]">
               <img
-                src="/assets/nasa/perseverance.jpg"
+                src="/Mars-explored/assets/nasa/perseverance.jpg"
                 alt="Perseverance rover and Ingenuity helicopter on Mars"
                 className="h-full w-full object-cover"
                 referrerPolicy="no-referrer"
@@ -271,7 +271,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
           <article className="flex flex-col sm:flex-row overflow-hidden rounded-xl border border-white/10 bg-[#0D111A]">
             <div className="sm:w-2/5 aspect-[4/3] sm:aspect-auto overflow-hidden bg-[#121723]">
               <img
-                src="/assets/pdf/pdf_img_1.jpg"
+                src="/Mars-explored/assets/pdf/pdf_img_1.jpg"
                 alt="Exposed underground water ice sheet on Mars (PDF Page 2)"
                 className="h-full w-full object-cover"
                 referrerPolicy="no-referrer"
@@ -307,7 +307,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
           <article className="flex flex-col sm:flex-row overflow-hidden rounded-xl border border-white/10 bg-[#0D111A]">
             <div className="sm:w-2/5 aspect-[4/3] sm:aspect-auto overflow-hidden bg-[#121723]">
               <img
-                src="/assets/pdf/pdf_img_4.jpg"
+                src="/Mars-explored/assets/pdf/pdf_img_4.jpg"
                 alt="Future astronaut and pressurized rover on Mars (PDF Page 5)"
                 className="h-full w-full object-cover"
                 referrerPolicy="no-referrer"

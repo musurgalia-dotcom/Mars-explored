@@ -19,7 +19,7 @@ export const PDF_BIOMES: PdfBiome[] = [
       'Exposed subsurface water-ice sheets and stratified polar/mid-latitude ice deposits preserved beneath shallow regolith.',
     details:
       'Orbital observations from Mars Reconnaissance Orbiter (HiRISE and SHARAD) and Mars Odyssey show thick layers of water ice buried just beneath the dusty surface at mid-to-high latitudes, exposed along steep eroded scarps.',
-    imageUrl: '/assets/pdf/pdf_img_1.jpg',
+    imageUrl: '/Mars-explored/assets/pdf/pdf_img_1.jpg',
     pdfPage: 'Original PDF Page 2',
     attribution: 'NASA/JPL-Caltech/UArizona (PIA22077 — Underground Martian Ice Deposit Exposed at Scarp)',
     sourceUrl: 'https://images.nasa.gov/details/PIA22077'
@@ -32,7 +32,7 @@ export const PDF_BIOMES: PdfBiome[] = [
       'Vast tectonic rift troughs, gullied cliff walls, and wind-sculpted sedimentary floors exemplified by Valles Marineris.',
     details:
       'Stretching over 4,000 km along the Martian equator, Martian canyon systems expose deep vertical sections of ancient volcanic and sedimentary crust shaped by rifting, landslides, and ancient water erosion.',
-    imageUrl: '/assets/pdf/pdf_img_2.jpg',
+    imageUrl: '/Mars-explored/assets/pdf/pdf_img_2.jpg',
     pdfPage: 'Original PDF Page 3',
     attribution: 'Included in author project PDF (nasaais_c5566504.pdf, Page 3)',
     sourceUrl: 'https://science.nasa.gov/mars/facts/#h-surface'
@@ -45,7 +45,7 @@ export const PDF_BIOMES: PdfBiome[] = [
       'Massive basaltic shield volcanoes and broad lava plateaus formed by prolonged hotspot volcanism without plate tectonics.',
     details:
       'Olympus Mons and the surrounding Tharsis volcanic plains represent the largest volcanic structures in the solar system, surrounded by broad northern volcanic plains such as Arcadia Planitia and Elysium Planitia.',
-    imageUrl: '/assets/pdf/pdf_img_3.jpg',
+    imageUrl: '/Mars-explored/assets/pdf/pdf_img_3.jpg',
     pdfPage: 'Original PDF Page 4',
     attribution: 'Included in author project PDF (nasaais_c5566504.pdf, Page 4) / NASA Viking Orbiter',
     sourceUrl: 'https://images.nasa.gov/details/PIA03821'
@@ -53,7 +53,7 @@ export const PDF_BIOMES: PdfBiome[] = [
 ];
 
 export const PDF_FUTURE_EXPLORATION_IMAGE = {
-  imageUrl: '/assets/pdf/pdf_img_4.jpg',
+  imageUrl: '/Mars-explored/assets/pdf/pdf_img_4.jpg',
   caption:
     'Concept illustration of future astronaut surface EVA and pressurized rover reconnaissance on Mars (Original PDF Page 5).',
   attribution: 'Included in author project PDF (nasaais_c5566504.pdf, Page 5)'
