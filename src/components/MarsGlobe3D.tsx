@@ -200,20 +200,20 @@ export default function MarsGlobe3D({
     const textureLoader = new THREE.TextureLoader();
     const maxAniso = renderer.capabilities.getMaxAnisotropy();
 
-    const vikingTex = textureLoader.load('/assets/mars/mars_viking_2k.jpg', () => {
+    const vikingTex = textureLoader.load(`${import.meta.env.BASE_URL}assets/mars/mars_viking_2k.jpg`, () => {
       setIsLoaded(true);
       requestRender();
     });
     vikingTex.colorSpace = THREE.SRGBColorSpace;
     vikingTex.anisotropy = maxAniso;
 
-    const molaTex = textureLoader.load('/assets/mars/mars_mola_2k.jpg', () => {
+    const molaTex = textureLoader.load(`${import.meta.env.BASE_URL}assets/mars/mars_mola_2k.jpg`, () => {
       requestRender();
     });
     molaTex.colorSpace = THREE.SRGBColorSpace;
     molaTex.anisotropy = maxAniso;
 
-    const bumpTex = textureLoader.load('/assets/mars/mars_bump_2k.jpg', () => {
+    const bumpTex = textureLoader.load(`${import.meta.env.BASE_URL}assets/mars/mars_bump_2k.jpg`, () => {
       requestRender();
     });
     bumpTex.anisotropy = maxAniso;
